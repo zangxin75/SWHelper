@@ -1,0 +1,187 @@
+{
+  "agent_settings": {
+    "name": "SolidWorks AI Agent Coordinator",
+    "version": "1.0.0",
+    "description": "Claude Code驱动的SolidWorks设计自动化Agent",
+
+    "default_settings": {
+      "default_material": "铝合金_6061",
+      "default_units": "mm",
+      "enable_validation": true,
+      "max_retries": 3,
+      "timeout": 30
+    },
+
+    "capabilities": {
+      "modeling": {
+        "enabled": true,
+        "features": [
+          "create_part",
+          "create_sketch",
+          "create_extrude",
+          "create_revolve",
+          "create_fillet",
+          "create_chamfer",
+          "create_pattern"
+        ]
+      },
+      "assembly": {
+        "enabled": true,
+        "features": [
+          "create_assembly",
+          "insert_component",
+          "add_mate",
+          "create_pattern"
+        ]
+      },
+      "analysis": {
+        "enabled": true,
+        "features": [
+          "calculate_mass",
+          "measure_distance",
+          "check_interference",
+          "analyze_stress"
+        ]
+      },
+      "export": {
+        "enabled": true,
+        "formats": ["STEP", "IGES", "PDF", "DXF"]
+      }
+    }
+  },
+
+  "claude_settings": {
+    "api_key": "${ANTHROPIC_API_KEY}",
+    "model": "claude-3-5-sonnet-20241022",
+    "max_tokens": 2048,
+    "temperature": 0.7,
+    "fallback_to_local": true
+  },
+
+  "solidworks_settings": {
+    "version": "2026",
+    "com_timeout": 30,
+    "auto_save": true,
+    "backup_before_modification": true,
+    "max_document_size": "100MB"
+  },
+
+  "mcp_settings": {
+    "server_path": "D:\\sw2026\\项目\\SolidworksMCP-python",
+    "server_port": 3000,
+    "enable_logging": true,
+    "log_level": "INFO"
+  },
+
+  "knowledge_base": {
+    "materials": {
+      "铝合金_6061": {
+        "density": 2.7,
+        "yield_strength": 276,
+        "elastic_modulus": 68.9,
+        "typical_uses": ["机架", "支架", "外壳", "航空航天"]
+      },
+      "不锈钢_304": {
+        "density": 7.93,
+        "yield_strength": 290,
+        "elastic_modulus": 193,
+        "typical_uses": ["管道", "食品设备", "化工", "医疗"]
+      },
+      "碳钢_Q235": {
+        "density": 7.85,
+        "yield_strength": 235,
+        "elastic_modulus": 212,
+        "typical_uses": ["结构件", "机械零件", "建筑"]
+      }
+    },
+
+    "design_rules": {
+      "minimum_wall_thickness": {
+        "aluminum": "2mm",
+        "steel": "1.5mm",
+        "plastic": "1mm"
+      },
+      "draft_angles": {
+        "default": "1-3度",
+        "deep_draw": "3-5度",
+        "shallow": "0.5-1度"
+      },
+      "fillet_radii": {
+        "minimum": "wall_thickness * 0.25",
+        "preferred": "wall_thickness * 0.5"
+      },
+      "hole_diameters": {
+        "preferred": ["M3", "M4", "M5", "M6", "M8", "M10", "M12"],
+        "imperial": ["#4", "#6", "#8", "#10", "1/4\"", "3/8\"", "1/2\""]
+      }
+    },
+
+    "standard_components": {
+      "bolts": {
+        "metric": ["M3", "M4", "M5", "M6", "M8", "M10", "M12", "M16", "M20"],
+        "imperial": ["#4-40", "#6-32", "#8-32", "#10-32", "1/4\"-20", "3/8\"-16", "1/2\"-13"]
+      },
+      "nuts": {
+        "metric": ["M3", "M4", "M5", "M6", "M8", "M10", "M12", "M16", "M20"],
+        "imperial": ["#4", "#6", "#8", "#10", "1/4\"", "3/8\"", "1/2\""]
+      },
+      "bearings": {
+        "deep_groove": ["6000", "6200", "6300", "6000-2RS", "6200-2RS", "6300-2RS"],
+        "angular_contact": ["7200", "7300", "7200B", "7300B"]
+      },
+      "fasteners": {
+        "washers": ["M3", "M4", "M5", "M6", "M8", "M10", "M12"],
+        "pins": ["Ø2", "Ø3", "Ø4", "Ø5", "Ø6", "Ø8", "Ø10"]
+      }
+    },
+
+    "design_templates": {
+      "bracket": {
+        "default_thickness": "5mm",
+        "mounting_holes": "M5 or M6",
+        "fillet_radius": "R3-R5",
+        "considerations": ["加强筋", "减重孔", "安装面平整度"]
+      },
+      "shaft": {
+        "standard_diameters": ["6mm", "8mm", "10mm", "12mm", "15mm", "20mm"],
+        "tolerance": "h7 or k6",
+        "surface_finish": "Ra 0.8 or better",
+        "considerations": ["同轴度", "圆度", "表面硬化"]
+      },
+      "housing": {
+        "wall_thickness": "3-5mm",
+        "bearing_seats": "按轴承标准",
+        "sealing": "考虑密封槽",
+        "considerations": ["散热", "维护通道", "观察孔"]
+      }
+    }
+  },
+
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "file": "配置/agent.log",
+    "max_size": "10MB",
+    "backup_count": 5,
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  },
+
+  "performance": {
+    "enable_caching": true,
+    "cache_size": 100,
+    "parallel_execution": true,
+    "max_parallel_tasks": 5,
+    "memory_limit": "1GB"
+  },
+
+  "security": {
+    "validate_inputs": true,
+    "sanitize_commands": true,
+    "limit_file_operations": true,
+    "allowed_directories": [
+      "D:\\sw2026",
+      "D:\\sw2026\\模型文件",
+      "D:\\sw2026\\文档"
+    ]
+  }
+}

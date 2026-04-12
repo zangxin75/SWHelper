@@ -1,0 +1,154 @@
+{
+  "version": "1.0",
+  "project_name": "SolidWorks AI Agent",
+
+  "document_management": {
+    "enabled": true,
+    "auto_classify": true,
+    "use_chinese": true,
+    "create_backup": false,
+    "naming_convention": "chinese_underscore",
+
+    "classification_rules": {
+      "research_reports": {
+        "keywords": ["调研", "研究", "分析", "报告", "可行性", "对比"],
+        "directory": "文档/研究报告/",
+        "naming_pattern": "{主题}_研究报告.md",
+        "description": "技术调研、市场分析、方案对比文档"
+      },
+
+      "user_guides": {
+        "keywords": ["指南", "教程", "快速开始", "使用", "入门", "手册"],
+        "directory": "文档/使用指南/",
+        "naming_pattern": "{功能}_快速启动指南.md",
+        "description": "用户手册、教程、快速参考文档"
+      },
+
+      "technical_docs": {
+        "keywords": ["API", "架构", "设计", "接口", "规范", "技术", "数据模型"],
+        "directory": "文档/技术文档/",
+        "naming_pattern": "{组件}_技术文档.md",
+        "description": "API文档、架构设计、接口说明文档"
+      },
+
+      "project_management": {
+        "keywords": ["计划", "进度", "报告", "总结", "项目", "里程碑", "会议"],
+        "directory": "文档/项目管理/",
+        "naming_pattern": "{类型}_{项目名称}_{日期}.md",
+        "description": "项目计划、进度报告、总结文档"
+      },
+
+      "knowledge_base": {
+        "keywords": ["最佳实践", "经验", "技巧", "优化", "问题", "解决方案"],
+        "directory": "文档/知识库/",
+        "naming_pattern": "{主题}_知识条目.md",
+        "description": "最佳实践、经验总结、问题解决文档"
+      }
+    },
+
+    "code_management": {
+      "python_scripts": {
+        "extensions": [".py"],
+        "directory": "代码/Python脚本/",
+        "naming_pattern": "{功能}.py",
+        "description": "Python自动化脚本"
+      },
+
+      "vba_macros": {
+        "extensions": [".bas", ".swb"],
+        "directory": "代码/VBA宏/",
+        "naming_pattern": "{零件}_{操作}.bas",
+        "description": "SolidWorks VBA宏文件"
+      },
+
+      "test_code": {
+        "extensions": ["_test.py", "test_*.py"],
+        "directory": "代码/测试代码/",
+        "naming_pattern": "test_{功能}.py",
+        "description": "测试和验证代码"
+      }
+    },
+
+    "model_files": {
+      "parts": {
+        "extensions": [".SLDPRT"],
+        "directory": "模型文件/零件/",
+        "naming_pattern": "{名称}_{规格}.SLDPRT"
+      },
+
+      "assemblies": {
+        "extensions": [".SLDASM"],
+        "directory": "模型文件/装配体/",
+        "naming_pattern": "{产品名称}_装配.SLDASM"
+      },
+
+      "drawings": {
+        "extensions": [".SLDDRW"],
+        "directory": "模型文件/工程图/",
+        "naming_pattern": "{零件名称}_图纸.SLDDRW"
+      }
+    },
+
+    "config_files": {
+      "json_configs": {
+        "extensions": [".json"],
+        "directory": "配置/",
+        "naming_pattern": "{用途}_config.json"
+      },
+
+      "env_files": {
+        "extensions": [".env"],
+        "directory": "配置/",
+        "naming_pattern": "environment.env"
+      }
+    }
+  },
+
+  "file_naming_rules": {
+    "use_chinese": true,
+    "separator": "_",
+    "max_length": 50,
+    "illegal_chars": ["/", "\\", ":", "*", "?", "\"", "<", ">", "|"],
+    "auto_clean": true,
+    "add_timestamp_on_conflict": true,
+    "timestamp_format": "%Y%m%d_%H%M%S"
+  },
+
+  "auto_organize": {
+    "enabled": true,
+    "run_on_write": true,
+    "exclude_patterns": [
+      ".git/*",
+      ".venv/*",
+      "node_modules/*",
+      "__pycache__/*",
+      "文档/*",
+      "代码/*",
+      "项目/*",
+      "配置/*",
+      "模型文件/*",
+      ".claude/*",
+      ".omc/*"
+    ],
+    "include_patterns": [
+      "*.md",
+      "*.py",
+      "*.bas",
+      "*.swb"
+    ]
+  },
+
+  "templates": {
+    "research_report": "配置/模板/研究报告模板.md",
+    "user_guide": "配置/模板/使用指南模板.md",
+    "technical_doc": "配置/模板/技术文档模板.md",
+    "project_plan": "配置/模板/项目计划模板.md"
+  },
+
+  "logging": {
+    "enabled": true,
+    "log_file": "配置/document_manager.log",
+    "log_level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  }
+}

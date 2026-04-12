@@ -134,6 +134,10 @@ class TaskDecomposer:
 
     def _decompose_modify(self, intent: Intent) -> List[Task]:
         """分解 MODIFY 意图"""
+        # Add object type validation
+        if intent.object != ObjectType.PART:
+            raise ValueError(f"Cannot modify object type: {intent.object}")
+
         params = intent.parameters
 
         # 判断修改类型
@@ -253,12 +257,6 @@ class TaskDecomposer:
 
     def _validate_modify_params(self, params: dict, required: List[str]):
         """验证修改参数"""
-        for param in required:
-            if param not in params:
-                raise ValueError(f"Missing required parameter: {param}")
-
-    def _validate_analyze_params(self, params: dict, required: List[str]):
-        """验证分析参数"""
         for param in required:
             if param not in params:
                 raise ValueError(f"Missing required parameter: {param}")

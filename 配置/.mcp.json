@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "solidworks-mcp": {
+      "command": "node",
+      "args": ["/home/zhy/sw2026/SolidworksMCP-TS/dist/index.js"],
+      "env": {
+        "SOLIDWORKS_PATH": "D:\\app_install\\solidworks2026\\SOLIDWORKS",
+        "USE_MOCK_SOLIDWORKS": "false"
+      }
+    }
+  }
+}
