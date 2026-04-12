@@ -47,7 +47,7 @@ def tool_wrapper_with_mock(mock_adapter):
     with patch('tool_wrapper.SWAdapter', return_value=mock_adapter):
         wrapper = ToolWrapper(use_mock=True)
         wrapper._adapter = mock_adapter
-        return wrapper
+        yield wrapper
 
 
 class TestToolWrapperInit:
