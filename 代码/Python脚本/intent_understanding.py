@@ -301,8 +301,6 @@ class IntentUnderstanding:
         Returns:
             (动作, 置信度)
         """
-        text_lower = text.lower()
-
         for action, patterns in self.action_patterns.items():
             for pattern in patterns:
                 if re.search(pattern, text, re.IGNORECASE):
@@ -320,8 +318,6 @@ class IntentUnderstanding:
         Returns:
             (对象, 置信度)
         """
-        text_lower = text.lower()
-
         for obj, patterns in self.object_patterns.items():
             for pattern in patterns:
                 if re.search(pattern, text, re.IGNORECASE):
