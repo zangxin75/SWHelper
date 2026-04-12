@@ -3,7 +3,7 @@ Interface definitions for dependency injection and testability
 """
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from schemas import Intent, Task, ToolResult, ExecutionResult, ValidationReport
+from .schemas import Intent, Task, ToolResult, ExecutionResult, ValidationReport
 
 
 class IKnowledgeBase(ABC):
