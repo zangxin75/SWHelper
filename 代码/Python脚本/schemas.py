@@ -12,6 +12,7 @@ class ActionType(str, Enum):
     MODIFY = "modify"
     ANALYZE = "analyze"
     EXPORT = "export"
+    UNKNOWN = "unknown"  # For unparseable inputs
 
 
 class ObjectType(str, Enum):
@@ -19,6 +20,8 @@ class ObjectType(str, Enum):
     PART = "part"
     ASSEMBLY = "assembly"
     DRAWING = "drawing"
+    FEATURE = "feature"  # For features that require existing model
+    UNKNOWN = "unknown"  # For unrecognizable objects
 
 
 class Intent(BaseModel):
