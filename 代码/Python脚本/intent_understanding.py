@@ -112,6 +112,7 @@ class IntentUnderstanding:
             ],
             ActionType.ANALYZE: [
                 r'分析|计算|测量|检查|评估|analyze|calculate|measure|check',
+                r'展开|flatten|展平',  # ENH-03: 钣金展开操作
             ],
             ActionType.EXPORT: [
                 r'导出|保存|输出|export|save|output',
@@ -270,7 +271,8 @@ class IntentUnderstanding:
         # FIX-06: 添加对象词（方块、圆柱、装配体等）表示隐含的创建意图
         # FIX-06: 添加单位词（毫米、厘米、米、mm、cm、m）表示隐含的设计意图
         # ENH-02: 添加工程图关键词（图纸、视图、比例、使用、A0-A4等）
-        keyword_pattern = r'创建|新建|生成|设计|修改|更改|调整|分析|计算|检查|导出|保存|输出|添加|删除|移除|做|弄|帮我|处理|打|方块|圆柱|球体|零件|装配|立方体|长方体|毫米|厘米|米|mm|cm|m|make|create|modify|change|analyze|export|add|delete|remove|do|help|process|cube|cylinder|sphere|part|assembly|使用|图纸|视图|比例|工程图|A0|A1|A2|A3|A4|drawing|view|sheet|scale|放大|缩小'
+        # ENH-03: 添加钣金关键词（钣金、折弯、展开、凹槽、切口、厚度等）
+        keyword_pattern = r'创建|新建|生成|设计|修改|更改|调整|分析|计算|检查|导出|保存|输出|添加|删除|移除|做|弄|帮我|处理|打|方块|圆柱|球体|零件|装配|立方体|长方体|毫米|厘米|米|mm|cm|m|make|create|modify|change|analyze|export|add|delete|remove|do|help|process|cube|cylinder|sphere|part|assembly|使用|图纸|视图|比例|工程图|A0|A1|A2|A3|A4|drawing|view|sheet|scale|放大|缩小|钣金|sheet.?metal|折弯|bend|展开|flatten|凹槽|hem|切口|louver|厚度|thickness'
         if not has_dimensions and not re.search(keyword_pattern, user_input, re.IGNORECASE):
             return {
                 "is_valid": False,
@@ -349,6 +351,12 @@ class IntentUnderstanding:
         # ENH-02: 复制工程图参数
         drawing_param_keys = ["view_count", "sheet_format", "scale", "annotation", "format"]
         for key in drawing_param_keys:
+            if key in intent_dict and intent_dict[key] is not None:
+                parameters[key] = intent_dict[key]
+
+        # ENH-03: 复制钣金参数
+        sheet_metal_param_keys = ["sheet_metal", "thickness", "angle", "bend_radius", "operation"]
+        for key in sheet_metal_param_keys:
             if key in intent_dict and intent_dict[key] is not None:
                 parameters[key] = intent_dict[key]
 
@@ -536,6 +544,12 @@ class IntentUnderstanding:
             if drawing_params:
                 result.update(drawing_params)
                 result["confidence"] += 0.05
+
+        # ENH-03: 提取钣金参数
+        sheet_metal_params = self._extract_sheet_metal_params(user_input)
+        if sheet_metal_params:
+            result.update(sheet_metal_params)
+            result["confidence"] += 0.05
 
         # ENH-02: 隐式对象映射 - 如果检测到DRAWING特有操作，默认为DRAWING对象
         # 适用于"添加尺寸"、"添加注释"、"导出PDF"、"使用A3图纸"、"比例1:2"等
@@ -815,6 +829,60 @@ class IntentUnderstanding:
         export_format_match = re.search(r'(PDF|pdf|STEP|step|DXF|dxf)', text)
         if export_format_match:
             params["format"] = export_format_match.group(1).lower()
+
+        return params
+
+    def _extract_sheet_metal_params(self, text: str) -> Dict[str, Any]:
+        """
+        提取钣金特定参数（ENH-03）
+
+        支持的参数：
+        - sheet_metal: 标记为钣金零件（True/False）
+        - thickness: 钣金厚度（mm）
+        - angle: 折弯角度（度）
+        - bend_radius: 折弯半径（mm）
+        - operation: 钣金操作（flatten/flatten）
+
+        Returns:
+            钣金参数字典
+        """
+        import re
+        params = {}
+
+        # 检测是否为钣金零件
+        if re.search(r'钣金|sheet.?metal', text, re.IGNORECASE):
+            params["sheet_metal"] = True
+
+        # 提取厚度："厚度2mm"、"2mm厚"、"thick 2mm"
+        thickness_match = re.search(r'(?:厚度|厚|thick|thickness)\s*([0-9.]+)\s*(?:mm|毫米)?', text)
+        if thickness_match:
+            params["thickness"] = float(thickness_match.group(1))
+
+        # 提取折弯角度："90度折弯"、"折弯90度"、"bend 90"
+        angle_match = re.search(r'(?:折弯|bend)\s*([0-9.]+)\s*[度度°]|([0-9.]+)\s*[度度°]\s*(?:折弯|bend)', text)
+        if angle_match:
+            # 尝试两种捕获组
+            if angle_match.group(1):
+                params["angle"] = float(angle_match.group(1))
+            elif angle_match.group(2):
+                params["angle"] = float(angle_match.group(2))
+
+        # 提取折弯半径："半径5mm折弯"、"R5折弯"
+        radius_match = re.search(r'(?:半径|半径R|r)\s*([0-9.]+)\s*(?:mm|毫米)?\s*(?:折弯|bend)', text)
+        if radius_match:
+            params["bend_radius"] = float(radius_match.group(1))
+
+        # 检测展开操作
+        if re.search(r'展开|flatten|展平', text, re.IGNORECASE):
+            params["operation"] = "flatten"
+
+        # 检测凹槽
+        if re.search(r'凹槽|hem', text, re.IGNORECASE):
+            params["feature_type"] = "hem"
+
+        # 检测切口
+        if re.search(r'切口|louver', text, re.IGNORECASE):
+            params["feature_type"] = "louver"
 
         return params
 
