@@ -25,7 +25,7 @@ from intent_understanding import IntentUnderstanding
 from task_decomposer import TaskDecomposer
 from task_executor import TaskExecutor
 from result_validator import ResultValidator
-from schemas import Intent, Task, ExecutionResult
+from schemas import Intent, Task, ExecutionResult, ActionType, ObjectType  # FIX-04: 添加枚举导入
 
 
 # ==================== E2E 测试用例 ====================
@@ -61,7 +61,7 @@ E2E_TEST_CASES = [
 E2E_ERROR_CASES = [
     # (user_input, 预期success, 预期error_type, 预期feedback_contains, 需求编号)
     ("", False, "IntentError", ["无法"], "E2E-04"),
-    ("!!###@", False, None, ["无法"], "E2E-05"),  # Changed to truly unparseable input
+    ("!!###@", False, "IntentError", ["无法"], "E2E-05"),  # FIX-01: 无意义输入应返回 IntentError
 ]
 
 E2E_INTEGRATION_CASES = [
@@ -185,28 +185,44 @@ class TestE2EIntegration:
         """测试所有模块的正确集成"""
         # 创建所有模块实例
         kb = KnowledgeBase()
-        intent_engine = IntentUnderstanding(knowledge_base=kb)
-        decomposer = TaskDecomposer(knowledge_base=kb)
-        executor = TaskExecutor(use_real_sw=False)
+        intent_engine = IntentUnderstanding(use_claude=False)  # FIX-01/02/03: 移除 knowledge_base 参数
+        decomposer = TaskDecomposer()  # FIX-01/02/03: 移除 knowledge_base 参数
+        executor = TaskExecutor()  # FIX-03: 移除 use_real_sw 参数
+
+        # FIX-03: 注册 mock 工具（否则会找不到工具）
+        async def mock_create_part(**kwargs):
+            return {"success": True, "result": "mock_part_created", "tool_name": "create_part", "execution_time": 0.1}
+        executor.register_tool("create_part", mock_create_part)
+        executor.register_tool("create_sketch", mock_create_part)
+        executor.register_tool("create_rectangle", mock_create_part)
+        executor.register_tool("extrude_boss", mock_create_part)
+
         validator = ResultValidator(knowledge_base=kb)
 
         # 测试：意图理解
         user_input = "创建一个100x100x50毫米的长方体"
-        intent = intent_engine.understand_intent(user_input)
-        assert intent.action == IntentAction.CREATE
-        assert intent.object_type == IntentObject.FEATURE
+        intent = intent_engine.understand(user_input)  # FIX-04: 使用 understand 方法
+        assert intent.action == ActionType.CREATE  # FIX-04: 使用 ActionType 枚举
+        assert intent.object == ObjectType.PART  # FIX-04: 长方体应该是 PART 不是 FEATURE
 
         # 测试：任务分解
-        tasks = decomposer.decompose_task(intent)
+        tasks = decomposer.decompose(intent)  # FIX-03: 使用 decompose 方法
         assert len(tasks) > 0
-        assert tasks[0].tool_name in ["create_extrude", "create_loft", "create_revolve"]
+        assert tasks[0].tool in ["create_part", "create_sketch"]  # FIX-03: 使用 tool 属性
 
         # 测试：任务执行
-        exec_result = executor.execute_task(tasks[0])
+        import asyncio
+        exec_result = asyncio.run(executor.execute(tasks))  # FIX-03: execute 接受任务列表
         assert exec_result is not None
+        assert exec_result.success_count > 0
 
         # 测试：结果验证
-        validation = validator.validate_result(exec_result, tasks[0])
+        # FIX-03: validate 接受结果列表和意图字典
+        validation = validator.validate(
+            [{"success": r.success, "tool_name": r.tool_name, "result": r.result}
+             for r in exec_result.results],
+            {"action": intent.action.value, "object": intent.object.value}
+        )
         assert validation is not None
 
     @pytest.mark.e2e
@@ -214,7 +230,7 @@ class TestE2EIntegration:
         """测试知识库在流程中的集成"""
         user_input = "创建一个M10x20的螺栓"
 
-        result = self.coordinator.process_request(user_input)
+        result = self.coordinator.process_design_request(user_input)  # FIX-05: 使用正确的方法名
 
         assert result.success, "Should succeed with standard fastener"
         # 知识库应该识别标准件

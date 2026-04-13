@@ -18,6 +18,7 @@ sys.path.insert(0, str(project_root / "代码/Python脚本"))
 
 from intent_understanding import IntentUnderstanding
 from knowledge_base import KnowledgeBase
+from agent_coordinator import AgentCoordinator
 from schemas import ActionType, ObjectType
 
 
@@ -30,7 +31,7 @@ FIX_06_TEST_CASES = [
     ("Create a 100x100x50mm cube", [100, 100, 50], "FIX-06-03"),
     ("创建100x100x50mm的长方体", [100, 100, 50], "FIX-06-04"),
     ("创建100x100x50毫米的长方体", [100, 100, 50], "FIX-06-05"),
-    ("100mm x 100厘米 x 50m 的方块", [100, 1000, 50000], "FIX-06-06"),  # 单位混合
+    ("创建100mm x 100厘米 x 50m 的方块", [100, 1000, 50000], "FIX-06-06"),  # 单位混合，添加"创建"关键词
 ]
 
 

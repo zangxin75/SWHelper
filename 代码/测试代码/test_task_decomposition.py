@@ -295,29 +295,29 @@ class TestTaskDecomposition:
 
         intent = Intent(
             action=ActionType.CREATE,
-            object=ObjectType.ASSEMBLY,  # ASSEMBLY not supported for CREATE
+            object=ObjectType.DRAWING,  # DRAWING not supported for CREATE
             parameters={},
             confidence=0.9,
-            raw_input="创建装配"
+            raw_input="创建工程图"
         )
 
         with pytest.raises(ValueError, match="Unknown entity type"):
             decomposer.decompose(intent)
 
     def test_unknown_action_type(self, decomposer):
-        """Test: D-11 - Unknown action type should raise error via Pydantic validation"""
-        from pydantic import ValidationError as PydanticValidationError
+        """Test: D-11 - Unknown action type should raise error"""
+        from schemas import Intent, ObjectType
 
-        # Pydantic validates enums before our code runs
-        # Invalid action values are caught at Intent creation time
-        with pytest.raises(PydanticValidationError) as exc_info:
-            Intent(
-                action="unknown",  # Invalid action - not in ActionType enum
-                object=ObjectType.PART,
-                parameters={},
-                confidence=0.5,
-                raw_input="未知操作"
-            )
+        # Pydantic converts invalid enum values to UNKNOWN
+        # The decompose() method should handle UNKNOWN action
+        intent = Intent(
+            action="unknown",  # Will be converted to ActionType.UNKNOWN
+            object=ObjectType.PART,
+            parameters={},
+            confidence=0.5,
+            raw_input="未知操作"
+        )
 
-        # Verify the error mentions the valid enum values
-        assert "action" in str(exc_info.value)
+        # Should raise ValueError in decompose()
+        with pytest.raises(ValueError, match="Unknown action type"):
+            decomposer.decompose(intent)

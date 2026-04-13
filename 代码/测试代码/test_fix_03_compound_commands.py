@@ -20,6 +20,7 @@ from intent_understanding import IntentUnderstanding
 from task_decomposition import TaskDecomposer
 from knowledge_base import KnowledgeBase
 from schemas import ActionType, ObjectType
+from agent_coordinator import AgentCoordinator
 
 
 # ==================== 测试用例数据 ====================
@@ -44,8 +45,8 @@ class TestFix03CompoundCommands:
     def setup_modules(self):
         """设置意图理解和任务分解模块"""
         self.kb = KnowledgeBase()
-        self.intent_engine = IntentUnderstanding(knowledge_base=self.kb)
-        self.decomposer = TaskDecomposer(knowledge_base=self.kb)
+        self.intent_engine = IntentUnderstanding(use_claude=False)
+        self.decomposer = TaskDecomposer()
 
     @pytest.mark.parametrize("user_input,expected_tools,req_id", FIX_03_TEST_CASES)
     def test_compound_command_decomposition(self, user_input, expected_tools, req_id):
@@ -66,7 +67,7 @@ class TestFix03CompoundCommands:
             f"{req_id}: Expected {len(expected_tools)} tasks, got {len(tasks)}"
 
         # 验证每个预期的工具都存在
-        actual_tools = [task.tool_name for task in tasks]
+        actual_tools = [task.tool for task in tasks]
         for expected_tool in expected_tools:
             assert expected_tool in actual_tools, \
                 f"{req_id}: Expected tool '{expected_tool}' not found in {actual_tools}"
@@ -117,8 +118,8 @@ class TestFix03CompoundPatterns:
     def setup_modules(self):
         """设置模块"""
         self.kb = KnowledgeBase()
-        self.intent_engine = IntentUnderstanding(knowledge_base=self.kb)
-        self.decomposer = TaskDecomposer(knowledge_base=self.kb)
+        self.intent_engine = IntentUnderstanding(use_claude=False)
+        self.decomposer = TaskDecomposer()
 
     def test_connector_variations(self):
         """测试不同的连接词"""
@@ -137,7 +138,7 @@ class TestFix03CompoundPatterns:
             assert len(tasks) >= 2, f"Should have at least 2 tasks for '{user_input}', got {len(tasks)}"
 
             # 应该包含创建和分析工具
-            tool_names = [t.tool_name for t in tasks]
+            tool_names = [t.tool for t in tasks]
             assert "create_part" in tool_names, f"Should include create_part for '{user_input}'"
             assert "calculate_mass" in tool_names, f"Should include calculate_mass for '{user_input}'"
 
@@ -150,7 +151,7 @@ class TestFix03CompoundPatterns:
         assert len(tasks) == 3, "Should have exactly 3 tasks"
 
         # 验证工具名称
-        tool_names = [t.tool_name for t in tasks]
+        tool_names = [t.tool for t in tasks]
         assert "create_part" in tool_names
         assert "calculate_mass" in tool_names
         assert "export_pdf" in tool_names
@@ -163,12 +164,12 @@ class TestFix03CompoundPatterns:
         # 应该生成2个任务：创建和设置材料
         assert len(tasks) >= 2, "Should have at least 2 tasks"
 
-        tool_names = [t.tool_name for t in tasks]
+        tool_names = [t.tool for t in tasks]
         assert "create_part" in tool_names
         assert "assign_material" in tool_names
 
         # 验证材料参数
-        material_task = next((t for t in tasks if t.tool_name == "assign_material"), None)
+        material_task = next((t for t in tasks if t.tool == "assign_material"), None)
         assert material_task is not None, "Should have assign_material task"
         assert "material" in material_task.parameters, "Should have material parameter"
         assert "铝" in material_task.parameters["material"], "Material should contain '铝'"

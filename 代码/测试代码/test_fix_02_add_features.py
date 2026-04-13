@@ -20,6 +20,7 @@ from intent_understanding import IntentUnderstanding
 from task_decomposition import TaskDecomposer
 from knowledge_base import KnowledgeBase
 from schemas import ActionType, ObjectType
+from agent_coordinator import AgentCoordinator
 
 
 # ==================== 测试用例数据 ====================
@@ -44,8 +45,8 @@ class TestFix02AddFeatures:
     def setup_modules(self):
         """设置意图理解和任务分解模块"""
         self.kb = KnowledgeBase()
-        self.intent_engine = IntentUnderstanding(knowledge_base=self.kb)
-        self.decomposer = TaskDecomposer(knowledge_base=self.kb)
+        self.intent_engine = IntentUnderstanding(use_claude=False)
+        self.decomposer = TaskDecomposer()
 
     @pytest.mark.parametrize("user_input,expected_tool,expected_params_key,expected_params_value,req_id",
                              FIX_02_TEST_CASES)
@@ -71,13 +72,13 @@ class TestFix02AddFeatures:
         # 验证工具名称（如果预期有工具）
         if expected_tool:
             # 检查是否有任何任务使用了预期工具
-            found_tool = any(task.tool_name == expected_tool for task in tasks)
-            assert found_tool, f"{req_id}: Expected to find tool '{expected_tool}' in tasks, got {[t.tool_name for t in tasks]}"
+            found_tool = any(task.tool == expected_tool for task in tasks)
+            assert found_tool, f"{req_id}: Expected to find tool '{expected_tool}' in tasks, got {[t.tool for t in tasks]}"
 
             # 如果预期了特定参数
             if expected_params_key and expected_params_value:
                 # 找到使用预期工具的任务
-                target_task = next((t for t in tasks if t.tool_name == expected_tool), None)
+                target_task = next((t for t in tasks if t.tool == expected_tool), None)
                 assert target_task is not None, f"{req_id}: Should have task with tool '{expected_tool}'"
 
                 # 验证参数
@@ -146,8 +147,8 @@ class TestFix02FeatureCombinations:
     def setup_modules(self):
         """设置模块"""
         self.kb = KnowledgeBase()
-        self.intent_engine = IntentUnderstanding(knowledge_base=self.kb)
-        self.decomposer = TaskDecomposer(knowledge_base=self.kb)
+        self.intent_engine = IntentUnderstanding(use_claude=False)
+        self.decomposer = TaskDecomposer()
 
     def test_multiple_features_sequential(self):
         """测试连续添加多个特征"""
@@ -174,7 +175,7 @@ class TestFix02FeatureCombinations:
         assert len(tasks) >= 2, "Should have at least 2 tasks for multiple features"
 
         # 验证工具名称
-        tool_names = [t.tool_name for t in tasks]
+        tool_names = [t.tool for t in tasks]
         assert "create_fillet" in tool_names, "Should include fillet tool"
 
 

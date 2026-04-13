@@ -18,6 +18,7 @@ sys.path.insert(0, str(project_root / "代码/Python脚本"))
 
 from intent_understanding import IntentUnderstanding
 from knowledge_base import KnowledgeBase
+from agent_coordinator import AgentCoordinator
 from schemas import ActionType, ObjectType
 
 
@@ -54,8 +55,8 @@ class TestFix04ObjectRecognition:
 
         # 验证对象类型
         assert intent is not None, f"{req_id}: Intent should not be None"
-        assert intent.object_type == expected_object, \
-            f"{req_id}: Expected object_type={expected_object}, got {intent.object_type}"
+        assert intent.object == expected_object, \
+            f"{req_id}: Expected object_type={expected_object}, got {intent.object}"
 
         # 验证动作类型
         if expected_object == ObjectType.FEATURE:
@@ -72,11 +73,11 @@ class TestFix04ObjectRecognition:
         intent = self.intent_engine.understand("创建立方体")
 
         # 必须是PART类型
-        assert intent.object_type == ObjectType.PART, \
-            f"'立方体' should be PART, not FEATURE. Got {intent.object_type}"
+        assert intent.object == ObjectType.PART, \
+            f"'立方体' should be PART, not FEATURE. Got {intent.object}"
 
         # 不应该是FEATURE
-        assert intent.object_type != ObjectType.FEATURE, \
+        assert intent.object != ObjectType.FEATURE, \
             "'立方体' should not be FEATURE"
 
     def test_common_part_shapes(self):
@@ -92,8 +93,8 @@ class TestFix04ObjectRecognition:
 
         for user_input in part_shapes:
             intent = self.intent_engine.understand(user_input)
-            assert intent.object_type == ObjectType.PART, \
-                f"'{user_input}' should be PART, got {intent.object_type}"
+            assert intent.object == ObjectType.PART, \
+                f"'{user_input}' should be PART, got {intent.object}"
 
     def test_common_features(self):
         """测试常见特征应识别为FEATURE"""
@@ -150,8 +151,8 @@ class TestFix04ObjectContext:
 
         for user_input in assembly_inputs:
             intent = self.intent_engine.understand(user_input)
-            assert intent.object_type == ObjectType.ASSEMBLY, \
-                f"'{user_input}' should be ASSEMBLY, got {intent.object_type}"
+            assert intent.object == ObjectType.ASSEMBLY, \
+                f"'{user_input}' should be ASSEMBLY, got {intent.object}"
 
     def test_drawing_recognition(self):
         """测试工程图识别"""
@@ -163,8 +164,8 @@ class TestFix04ObjectContext:
 
         for user_input in drawing_inputs:
             intent = self.intent_engine.understand(user_input)
-            assert intent.object_type == ObjectType.DRAWING, \
-                f"'{user_input}' should be DRAWING, got {intent.object_type}"
+            assert intent.object == ObjectType.DRAWING, \
+                f"'{user_input}' should be DRAWING, got {intent.object}"
 
 
 if __name__ == "__main__":

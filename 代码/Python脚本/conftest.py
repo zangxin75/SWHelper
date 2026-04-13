@@ -15,7 +15,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 import pytest_asyncio
-from fastmcp import FastMCP
+# from fastmcp import FastMCP  # 临时注释，fastmcp未安装
 from types import SimpleNamespace
 
 from src.solidworks_mcp.config import (

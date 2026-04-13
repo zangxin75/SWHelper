@@ -19,11 +19,11 @@ from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 
 from knowledge_base import KnowledgeBase
-from intent_understanding import IntentUnderstanding, IntentAction, IntentObject
-from task_decomposer import TaskDecomposer
+from intent_understanding import IntentUnderstanding
+from task_decomposition import TaskDecomposer
 from task_executor import TaskExecutor
 from result_validator import ResultValidator
-from schemas import Intent, Task, ExecutionResult, ValidationReport
+from schemas import Intent, Task, ExecutionResult, ValidationReport, ActionType, ObjectType
 
 
 @dataclass
@@ -146,11 +146,209 @@ class AgentCoordinator:
                 "execution_time": 0.05
             }
 
+        # FIX-03: 添加复合操作需要的mock工具
+        async def mock_calculate_mass(**kwargs):
+            return {
+                "success": True,
+                "result": "mass_calculated",
+                "tool_name": "calculate_mass",
+                "execution_time": 0.05
+            }
+
+        async def mock_export_step(**kwargs):
+            return {
+                "success": True,
+                "result": "exported_to_step",
+                "tool_name": "export_step",
+                "execution_time": 0.05
+            }
+
+        async def mock_export_pdf(**kwargs):
+            return {
+                "success": True,
+                "result": "exported_to_pdf",
+                "tool_name": "export_pdf",
+                "execution_time": 0.05
+            }
+
+        async def mock_assign_material(**kwargs):
+            return {
+                "success": True,
+                "result": "material_assigned",
+                "tool_name": "assign_material",
+                "execution_time": 0.05
+            }
+
+        async def mock_get_mass_properties(**kwargs):
+            return {
+                "success": True,
+                "result": "mass_properties",
+                "tool_name": "get_mass_properties",
+                "execution_time": 0.05
+            }
+
+        # FIX-02: 添加特征操作需要的mock工具
+        async def mock_create_fillet(**kwargs):
+            """创建圆角或倒角（FIX-02）"""
+            return {
+                "success": True,
+                "result": "mock_fillet_created",
+                "tool_name": "create_fillet",
+                "execution_time": 0.05
+            }
+
+        async def mock_create_extrude_cut(**kwargs):
+            """创建拉伸切除（用于孔等，FIX-02）"""
+            return {
+                "success": True,
+                "result": "mock_extrude_cut_created",
+                "tool_name": "create_extrude_cut",
+                "execution_time": 0.05
+            }
+
+        async def mock_create_linear_pattern(**kwargs):
+            """创建线性阵列（FIX-02）"""
+            return {
+                "success": True,
+                "result": "mock_linear_pattern_created",
+                "tool_name": "create_linear_pattern",
+                "execution_time": 0.05
+            }
+
+        # ENH-01: 添加装配体操作的mock工具
+        async def mock_create_assembly(**kwargs):
+            """创建装配体（ENH-01）"""
+            return {
+                "success": True,
+                "result": "mock_assembly_created",
+                "tool_name": "create_assembly",
+                "execution_time": 0.1
+            }
+
+        async def mock_add_mate(**kwargs):
+            """添加配合（ENH-01）"""
+            mate_type = kwargs.get("mate_type", "coaxial")
+            return {
+                "success": True,
+                "result": f"mock_mate_added_{mate_type}",
+                "tool_name": "add_mate",
+                "mate_type": mate_type,
+                "execution_time": 0.05
+            }
+
+        async def mock_check_interference(**kwargs):
+            """检查干涉（ENH-01）"""
+            return {
+                "success": True,
+                "result": "no_interference",
+                "tool_name": "check_interference",
+                "interference_found": False,
+                "execution_time": 0.1
+            }
+
+        async def mock_create_exploded_view(**kwargs):
+            """创建爆炸视图（ENH-01）"""
+            return {
+                "success": True,
+                "result": "exploded_view_created",
+                "tool_name": "create_exploded_view",
+                "execution_time": 0.1
+            }
+
+        async def mock_check_clearance(**kwargs):
+            """检查间隙（ENH-01）"""
+            return {
+                "success": True,
+                "result": "clearance_checked",
+                "tool_name": "check_clearance",
+                "clearance_value": 1.0,
+                "execution_time": 0.1
+            }
+
+        async def mock_modify_assembly(**kwargs):
+            """修改装配体（ENH-01）"""
+            return {
+                "success": True,
+                "result": "mock_assembly_modified",
+                "tool_name": "modify_assembly",
+                "execution_time": 0.05
+            }
+
+        # ENH-02: 工程图操作工具
+        async def mock_create_drawing(**kwargs):
+            """创建工程图（ENH-02）"""
+            return {
+                "success": True,
+                "result": "mock_drawing_created",
+                "tool_name": "create_drawing",
+                "execution_time": 0.1
+            }
+
+        async def mock_add_dimensions(**kwargs):
+            """添加尺寸标注（ENH-02）"""
+            return {
+                "success": True,
+                "result": "mock_dimensions_added",
+                "tool_name": "add_dimensions",
+                "execution_time": 0.05
+            }
+
+        async def mock_add_annotation(**kwargs):
+            """添加注释（ENH-02）"""
+            return {
+                "success": True,
+                "result": "mock_annotation_added",
+                "tool_name": "add_annotation",
+                "execution_time": 0.05
+            }
+
+        async def mock_export_drawing(**kwargs):
+            """导出工程图（ENH-02）"""
+            format = kwargs.get("format", "pdf")
+            return {
+                "success": True,
+                "result": f"mock_drawing_exported_to_{format}",
+                "tool_name": "export_drawing",
+                "execution_time": 0.05
+            }
+
+        async def mock_modify_drawing(**kwargs):
+            """修改工程图（ENH-02）"""
+            return {
+                "success": True,
+                "result": "mock_drawing_modified",
+                "tool_name": "modify_drawing",
+                "execution_time": 0.05
+            }
+
         # 注册mock工具
         self.executor.register_tool("create_part", mock_create_part)
         self.executor.register_tool("modify_part", mock_modify_part)
         self.executor.register_tool("add_fillet", mock_add_fillet)
         self.executor.register_tool("add_chamfer", mock_add_chamfer)
+        # FIX-03: 注册复合操作工具
+        self.executor.register_tool("calculate_mass", mock_calculate_mass)
+        self.executor.register_tool("export_step", mock_export_step)
+        self.executor.register_tool("export_pdf", mock_export_pdf)
+        self.executor.register_tool("assign_material", mock_assign_material)
+        self.executor.register_tool("get_mass_properties", mock_get_mass_properties)
+        # FIX-02: 注册特征操作工具
+        self.executor.register_tool("create_fillet", mock_create_fillet)
+        self.executor.register_tool("create_extrude_cut", mock_create_extrude_cut)
+        self.executor.register_tool("create_linear_pattern", mock_create_linear_pattern)
+        # ENH-01: 注册装配体操作工具
+        self.executor.register_tool("create_assembly", mock_create_assembly)
+        self.executor.register_tool("add_mate", mock_add_mate)
+        self.executor.register_tool("check_interference", mock_check_interference)
+        self.executor.register_tool("create_exploded_view", mock_create_exploded_view)
+        self.executor.register_tool("check_clearance", mock_check_clearance)
+        self.executor.register_tool("modify_assembly", mock_modify_assembly)
+        # ENH-02: 注册工程图操作工具
+        self.executor.register_tool("create_drawing", mock_create_drawing)
+        self.executor.register_tool("add_dimensions", mock_add_dimensions)
+        self.executor.register_tool("add_annotation", mock_add_annotation)
+        self.executor.register_tool("export_drawing", mock_export_drawing)
+        self.executor.register_tool("modify_drawing", mock_modify_drawing)
 
         # TODO: 注册真实SolidWorks工具（当use_real_sw=True时）
 
@@ -196,7 +394,7 @@ class AgentCoordinator:
                 # 意图理解失败
                 result.feedback = self._generate_error_feedback(
                     "IntentError",
-                    "无法理解您的设计意图，请提供更清晰的描述",
+                    result.error_message or "无法理解您的设计意图，请提供更清晰的描述",
                     user_input
                 )
                 result.total_time = time.perf_counter() - total_start
@@ -248,6 +446,10 @@ class AgentCoordinator:
                 validation_result
             )
 
+            # FIX-04: 如果是特征操作，添加上下文警告
+            if intent_result.object == ObjectType.FEATURE:
+                result.feedback += "\n⚠ 警告: 特征操作通常需要现有模型上下文"
+
             result.success = True
 
         except Exception as e:
@@ -267,64 +469,49 @@ class AgentCoordinator:
 
         return result
 
-    def _understand_intent(self, user_input: str, result: CoordinatorResult) -> Optional[Dict]:
+    def _understand_intent(self, user_input: str, result: CoordinatorResult) -> Optional[Intent]:
         """理解用户意图"""
         if not user_input or not user_input.strip():
             result.error_type = "IntentError"
             return None
 
         try:
-            intent_dict = self.intent_engine.understand(user_input)
+            # 返回Intent对象
+            intent_obj = self.intent_engine.understand(user_input)
 
             # 检查是否理解失败
-            if intent_dict.get("confidence", 0) == 0:
+            # FIX-01: 拒绝两种情况：
+            # 1. action=UNKNOWN (验证失败，如无关键词、纯特殊字符等)
+            # 2. confidence < 0.2 (极低置信度，如空字符串、单字)
+            if intent_obj.action == ActionType.UNKNOWN or intent_obj.confidence < 0.2:
                 result.error_type = "IntentError"
-                result.error_message = intent_dict.get("error", "无法理解输入")
+                # 从constraints中获取具体的验证原因
+                if intent_obj.constraints and len(intent_obj.constraints) > 0:
+                    result.error_message = intent_obj.constraints[0]
+                else:
+                    result.error_message = "无法理解输入"
                 return None
 
-            # 保存意图到结果
-            result.intent = f"{intent_dict.get('action', 'unknown')}_{intent_dict.get('object', 'unknown')}"
+            # 保存意图到结果（枚举转字符串）
+            action_str = intent_obj.action.value if hasattr(intent_obj.action, 'value') else str(intent_obj.action)
+            object_str = intent_obj.object.value if hasattr(intent_obj.object, 'value') else str(intent_obj.object)
+            result.intent = f"{action_str}_{object_str}"
 
-            return intent_dict
+            return intent_obj
 
         except Exception as e:
             result.error_type = "IntentError"
             result.error_message = str(e)
             return None
 
-    def _decompose_tasks(self, intent_dict: Dict, result: CoordinatorResult) -> List[Task]:
+    def _decompose_tasks(self, intent_obj: Intent, result: CoordinatorResult) -> List[Task]:
         """分解意图为任务"""
         try:
-            # 获取action和object，处理枚举类型
-            action_value = intent_dict.get("action")
-            if hasattr(action_value, 'value'):
-                action_value = action_value.value
+            # Intent对象已经包含action和object（枚举类型）
+            # 不需要重新构建，直接使用
 
-            object_value = intent_dict.get("object")
-            if hasattr(object_value, 'value'):
-                object_value = object_value.value
-            # 如果object不是有效值，默认为part
-            if object_value not in ["part", "assembly", "drawing"]:
-                object_value = "part"
-
-            # 构建Intent对象
-            intent = Intent(
-                action=action_value or "create",
-                object=object_value,
-                parameters={
-                    "dimensions": intent_dict.get("dimensions"),
-                    "material": intent_dict.get("material"),
-                },
-                confidence=intent_dict.get("confidence", 0.0),
-                raw_input=""
-            )
-
-            # 尝试复杂分解
-            tasks = self.decomposer.decompose_complex(intent)
-
-            # 如果复杂分解没有产生额外任务，使用简单分解
-            if len(tasks) == 1:
-                tasks = self.decomposer.decompose(intent)
+            # FIX-03: 使用统一的 decompose 方法（支持复合操作和特征操作）
+            tasks = self.decomposer.decompose(intent_obj)
 
             if not tasks:
                 result.error_type = "DecompositionError"
@@ -379,7 +566,7 @@ class AgentCoordinator:
             result.error_message = str(e)
             return None
 
-    def _validate_results(self, execution_result: ExecutionResult, intent_dict: Dict,
+    def _validate_results(self, execution_result: ExecutionResult, intent_obj: Intent,
                          result: CoordinatorResult) -> ValidationReport:
         """验证执行结果"""
         try:
@@ -392,6 +579,14 @@ class AgentCoordinator:
                 }
                 for r in execution_result.results
             ]
+
+            # 将Intent对象转换为字典（验证器可能期望字典格式）
+            intent_dict = {
+                "action": intent_obj.action.value if hasattr(intent_obj.action, 'value') else intent_obj.action,
+                "object": intent_obj.object.value if hasattr(intent_obj.object, 'value') else intent_obj.object,
+                "parameters": intent_obj.parameters,
+                "confidence": intent_obj.confidence
+            }
 
             # 执行验证
             validation_report = self.validator.validate(results_list, intent_dict)
@@ -415,16 +610,63 @@ class AgentCoordinator:
             # 返回一个失败的验证报告
             return ValidationReport(success=False)
 
-    def _generate_success_feedback(self, intent_dict: Dict, tasks: List[Task],
+    def _generate_success_feedback(self, intent_obj: Intent, tasks: List[Task],
                                    execution_result: ExecutionResult,
                                    validation_report: ValidationReport) -> str:
         """生成成功反馈"""
         feedback_parts = []
 
-        # 1. 意图确认
-        action = intent_dict.get("action", "创建")
-        obj = intent_dict.get("object", "零件")
-        feedback_parts.append(f"✓ 已理解您的设计意图: {action} {obj}")
+        # 1. 意图确认（从Intent对象获取枚举值）
+        action = intent_obj.action.value if hasattr(intent_obj.action, 'value') else str(intent_obj.action)
+        obj = intent_obj.object.value if hasattr(intent_obj.action, 'value') else str(intent_obj.object)
+
+        # FIX-03/E2E-09: 如果是CREATE操作，尝试从raw_input或tasks中提取零件类型
+        if intent_obj.action == ActionType.CREATE and intent_obj.raw_input:
+            # 尝试从raw_input中提取零件类型描述
+            part_type_desc = None
+            raw_input_lower = intent_obj.raw_input.lower()
+
+            # 检查常见的零件类型关键词
+            if any(word in raw_input_lower for word in ['立方体', 'cube', '方块', 'block']):
+                part_type_desc = "立方体"
+            elif any(word in raw_input_lower for word in ['圆柱', 'cylinder', '圆柱体']):
+                part_type_desc = "圆柱"
+            elif any(word in raw_input_lower for word in ['球体', 'sphere', '球']):
+                part_type_desc = "球体"
+            elif any(word in raw_input_lower for word in ['长方体', 'cuboid']):
+                part_type_desc = "长方体"
+
+            if part_type_desc:
+                feedback_parts.append(f"✓ 已理解您的设计意图: 创建 {part_type_desc}")
+            else:
+                feedback_parts.append(f"✓ 已理解您的设计意图: {action} {obj}")
+        else:
+            feedback_parts.append(f"✓ 已理解您的设计意图: {action} {obj}")
+
+        # FIX-06: 如果有尺寸参数，显示尺寸信息
+        if "dimensions" in intent_obj.parameters and intent_obj.parameters["dimensions"]:
+            dimensions = intent_obj.parameters["dimensions"]
+            # 格式化尺寸显示，避免过多小数位
+            formatted_dims = [f"{d:.0f}" if d == int(d) else f"{d:.1f}" for d in dimensions]
+            feedback_parts.append(f"✓ 尺寸: {formatted_dims[0]} x {formatted_dims[1]} x {formatted_dims[2]} mm")
+
+        # FIX-05: 检查是否是标准件，添加标准件信息
+        standard_component = self._identify_standard_component(intent_obj.raw_input)
+        if standard_component:
+            component_name = standard_component.get("name", "")
+            feedback_parts.append(f"✓ 标准件: {component_name}")
+
+        # FIX-03: 显示任务详情（多任务或单个ANALYZE任务）
+        show_task_details = execution_result.success_count > 1 or intent_obj.action == ActionType.ANALYZE
+
+        if show_task_details:
+            task_descriptions = []
+            for r in execution_result.results:
+                if r.success:
+                    task_desc = self._get_task_description(r.tool_name)
+                    task_descriptions.append(task_desc)
+            if task_descriptions:
+                feedback_parts.append(f"✓ 已完成: {', '.join(task_descriptions)}")
 
         # 2. 执行摘要
         feedback_parts.append(f"✓ 成功执行 {execution_result.success_count} 个任务")
@@ -447,6 +689,33 @@ class AgentCoordinator:
 
         return "\n".join(feedback_parts)
 
+    def _get_task_description(self, tool_name: str) -> str:
+        """
+        获取工具的友好描述（FIX-03）
+
+        Args:
+            tool_name: 工具名称
+
+        Returns:
+            友好的描述字符串
+        """
+        descriptions = {
+            "create_part": "创建零件",
+            "modify_part": "修改零件",
+            "calculate_mass": "质量分析",
+            "get_mass_properties": "质量分析",
+            "export_step": "导出STEP",
+            "export_pdf": "导出PDF",
+            "assign_material": "设置材料",
+            "add_fillet": "添加圆角/倒角",
+            "add_chamfer": "添加倒角",
+            # FIX-02: 特征操作工具描述
+            "create_fillet": "添加圆角/倒角",
+            "create_extrude_cut": "创建孔特征",
+            "create_linear_pattern": "创建线性阵列"
+        }
+        return descriptions.get(tool_name, tool_name)
+
     def _generate_execution_feedback(self, execution_result: Optional[ExecutionResult],
                                     tasks: List[Task], partial_success: bool) -> str:
         """生成执行反馈（处理失败场景）"""
@@ -462,6 +731,7 @@ class AgentCoordinator:
     def _generate_error_feedback(self, error_type: str, error_message: str,
                                 user_input: str) -> str:
         """生成错误反馈"""
+        # FIX-01: 使用具体的错误消息而不是通用消息
         feedback = f"❌ 错误 ({error_type}): {error_message}"
 
         # 根据错误类型提供建议
@@ -477,3 +747,25 @@ class AgentCoordinator:
             feedback += f"\n{suggestions[error_type]}"
 
         return feedback
+
+    def _identify_standard_component(self, user_input: str) -> Optional[Dict[str, Any]]:
+        """
+        识别输入是否为标准件（FIX-05）
+
+        Args:
+            user_input: 原始用户输入
+
+        Returns:
+            标准件信息字典，如果不是标准件则返回None
+        """
+        if not user_input:
+            return None
+
+        # 使用知识库查询标准件
+        result = self.knowledge_base.search_standard_component(user_input)
+
+        # 只返回明确找到的标准件
+        if result and "name" in result:
+            return result
+
+        return None

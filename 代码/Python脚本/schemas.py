@@ -21,6 +21,7 @@ class ObjectType(str, Enum):
     ASSEMBLY = "assembly"
     DRAWING = "drawing"
     FEATURE = "feature"  # For features that require existing model
+    SKETCH = "sketch"    # For sketch operations
     UNKNOWN = "unknown"  # For unrecognizable objects
 
 
