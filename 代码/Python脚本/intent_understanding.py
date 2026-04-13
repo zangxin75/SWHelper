@@ -64,12 +64,42 @@ class IntentUnderstanding:
             self.use_claude = False
             self.claude_client = None
 
+    def _check_content_safety(self, user_input: str) -> Dict[str, Any]:
+        """
+        ENH-05: 检查内容安全性（安全过滤）
+
+        Args:
+            user_input: 用户输入
+
+        Returns:
+            安全检查结果，包含:
+            - is_safe: bool
+            - reason: str (如果不安全)
+        """
+        # 简单的关键词过滤（生产环境应使用更复杂的安全检查）
+        unsafe_patterns = [
+            r'炸弹|爆炸物|dangerous|harmful',  # 危险物品
+            r'武器|weapon',  # 武器
+            # 可以添加更多模式
+        ]
+
+        for pattern in unsafe_patterns:
+            if re.search(pattern, user_input, re.IGNORECASE):
+                return {
+                    "is_safe": False,
+                    "reason": "Inappropriate content detected"
+                }
+
+        return {
+            "is_safe": True
+        }
+
     def _compile_patterns(self):
         """编译正则表达式模式"""
         # 动作关键词模式（使用ActionType）
         self.action_patterns = {
             ActionType.CREATE: [
-                r'创建|生成|新建|增加|画|绘制|make|create|draw',
+                r'创建|生成|新建|增加|画|绘制|设计|make|create|draw|design',
                 r'做一个?|做一个?.+',
                 r'做.+',  # 匹配"做"后跟任意字符（如"做东西"）
                 r'帮我.+',  # 匹配"帮我"后跟任意字符（如"帮我处理"）
@@ -329,10 +359,28 @@ class IntentUnderstanding:
             for key, value in feature_info.items():
                 parameters[key] = value
 
+        # ENH-05: Copy nested parameters from Claude API response
+        # Claude returns {"parameters": {"type": "...", "base_dimensions": [...], ...}}
+        if "parameters" in intent_dict and intent_dict["parameters"]:
+            # Copy all nested parameters
+            for key, value in intent_dict["parameters"].items():
+                parameters[key] = value
+
         # FIX-04: 如果对象是FEATURE，动作应该是MODIFY
         # 这处理"创建筋"、"创建凸台"等情况
         if object_type == ObjectType.FEATURE and action == ActionType.CREATE:
             action = ActionType.MODIFY
+
+        # ENH-05: Handle success, error_type, error_message from Claude
+        success = intent_dict.get("success", True)
+        error_type = intent_dict.get("error_type")
+        error_message = intent_dict.get("error_message")
+
+        # If there's an error in the intent_dict, mark as failed
+        if "error" in intent_dict:
+            success = False
+            error_type = intent_dict.get("error")
+            error_message = intent_dict.get("reason", "Unknown error")
 
         return Intent(
             action=action,
@@ -340,19 +388,34 @@ class IntentUnderstanding:
             parameters=parameters,
             constraints=intent_dict.get("constraints", []),
             confidence=intent_dict.get("confidence", 0.5),
-            raw_input=raw_input
+            raw_input=raw_input,
+            success=success,
+            error_type=error_type,
+            error_message=error_message
         )
 
     def _understand_with_claude(self, user_input: str) -> Dict[str, Any]:
         """
-        使用Claude API进行意图理解
+        使用Claude API进行意图理解 (ENH-05)
 
         Args:
             user_input: 用户输入
 
         Returns:
-            结构化意图字典
+            结构化意图字典，包含success, error_type, error_message等字段
         """
+        # ENH-05: Safety filtering - 检测恶意或不当内容
+        safety_check = self._check_content_safety(user_input)
+        if not safety_check["is_safe"]:
+            return {
+                "action": "unknown",
+                "object": "unknown",
+                "success": False,
+                "error_type": "SafetyError",
+                "error_message": safety_check["reason"],
+                "confidence": 0.0
+            }
+
         # 构造提示词
         prompt = f"""你是SolidWorks 2026的意图理解助手。请分析用户输入并返回结构化的意图。
 
@@ -361,9 +424,13 @@ class IntentUnderstanding:
 请返回JSON格式的意图,包含以下字段:
 - action: 动作 (create/modify/analyze/export)
 - object: 对象 (part/assembly/drawing/feature)
-- dimensions: 尺寸 [x,y,z] (如果提到)
-- material: 材料 (如果提到)
+- parameters: 参数对象，包含:
+  - dimensions: 尺寸 [x,y,z] (如果提到)
+  - material: 材料 (如果提到)
+  - type: 类型 (如"bearing_seat"等)
+  - 任何其他相关参数
 - confidence: 置信度 0-1
+- success: true/false (是否成功理解)
 
 只返回JSON,不要其他内容。"""
 
@@ -381,12 +448,25 @@ class IntentUnderstanding:
             response_text = message.content[0].text
             result = json.loads(response_text)
 
+            # 确保有success字段
+            if "success" not in result:
+                result["success"] = True
+
             # 不再转换为枚举，在_dict_to_intent中统一处理
             return result
 
         except json.JSONDecodeError as e:
-            raise Exception(f"Failed to parse Claude response: {e}")
+            # JSON解析错误
+            return {
+                "action": "unknown",
+                "object": "unknown",
+                "success": False,
+                "error_type": "ParseError",
+                "error_message": f"Failed to parse Claude response: {e}",
+                "confidence": 0.0
+            }
         except Exception as e:
+            # API调用错误 - 这会导致降级到本地模式
             raise Exception(f"Claude API call failed: {e}")
 
     def _understand_local(self, user_input: str, fallback: bool = False) -> Dict[str, Any]:

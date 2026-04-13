@@ -33,6 +33,9 @@ class Intent(BaseModel):
     constraints: List[str] = Field(default_factory=list)
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
     raw_input: str
+    success: bool = Field(default=True)  # ENH-05: Track intent understanding success
+    error_type: Optional[str] = None  # ENH-05: Error type for safety failures (e.g., "SafetyError")
+    error_message: Optional[str] = None  # ENH-05: Error message for failures
 
 
 class Task(BaseModel):
