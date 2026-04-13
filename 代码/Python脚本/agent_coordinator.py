@@ -67,17 +67,19 @@ class AgentCoordinator:
     """
 
     def __init__(self, use_claude: bool = False, use_real_sw: bool = False,
-                 api_key: Optional[str] = None):
+                 use_real_mcp: bool = False, api_key: Optional[str] = None):
         """
         初始化协调器
 
         Args:
             use_claude: 是否使用Claude API进行意图理解
             use_real_sw: 是否使用真实SolidWorks（False则使用mock模式）
+            use_real_mcp: 是否使用真实MCP Server（ENH-07）
             api_key: Claude API密钥
         """
         self.use_claude = use_claude
         self.use_real_sw = use_real_sw
+        self.use_real_mcp = use_real_mcp or use_real_sw  # use_real_sw implies MCP
 
         # 初始化所有6个模块
         self._init_modules(api_key)
