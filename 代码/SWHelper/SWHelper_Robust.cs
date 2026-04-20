@@ -400,6 +400,33 @@ namespace SWHelper
                     model = (ModelDoc2)doc;
                     LogWarning("V6.3: 步骤2 - ModelDoc2 转换成功");
 
+                    // V10.0: 立即激活文档，确保 COM 对象完全初始化
+                    LogWarning("V10.0: 步骤2b - 激活文档");
+                    try
+                    {
+                        // 方法1: 尝试 EditActivate
+                        doc.EditActivate();
+                        LogWarning("V10.0: 步骤2b - EditActivate 成功");
+                    }
+                    catch
+                    {
+                        LogWarning("V10.0: 步骤2b - EditActivate 失败，尝试其他方法");
+                        try
+                        {
+                            // 方法2: 尝试通过 swApp 激活
+                            string docTitle = doc.GetTitle();
+                            if (docTitle != null)
+                            {
+                                swApp.ActivateDoc(docTitle);
+                                LogWarning("V10.0: 步骤2b - ActivateDoc 成功");
+                            }
+                        }
+                        catch
+                        {
+                            LogWarning("V10.0: 步骤2b - ActivateDoc 失败，文档可能已激活");
+                        }
+                    }
+
                     // 步骤3: 获取标题（这可能导致 DISP_E_BADINDEX）
                     LogWarning("V6.3: 步骤3 - 尝试获取标题");
                     string title = null;
@@ -489,7 +516,7 @@ namespace SWHelper
         }
 
         /// <summary>
-        /// 创建草图 - V8.9修复：添加延迟调用策略，解决零件初始化时序问题
+        /// 创建草图 - V9.0修复：完全绕过 SelectByID2，使用直接草图创建方法
         /// </summary>
         public bool CreateSketch()
         {
@@ -550,147 +577,39 @@ namespace SWHelper
                 // 继续执行
             }
 
-            // V8策略：使用dynamic实现晚绑定，避免类型不匹配
-            LogWarning("V8策略：使用dynamic晚绑定");
+            // V9.0策略：完全绕过 SelectByID2，使用替代方法
+            LogWarning("V9.0策略：完全绕过 SelectByID2");
 
             try
             {
-                // V8.7修复: 延迟获取 SketchManager，在实际需要时才获取
-                LogWarning("V8.7: 步骤1 - 创建 dynamicModel");
+                // V9.0: 创建 dynamic 对象
+                LogWarning("V9.0: 步骤1 - 创建 dynamicModel");
                 dynamic dynamicModel = model;
-                LogWarning("V8.7: 步骤1 - dynamicModel 创建成功");
-
-                // 不在这里获取 SketchManager，而是在需要时才获取
-                LogWarning("V8.7: 步骤2 - 跳过 SketchManager 预获取，将在需要时获取");
-
-                // 声明 dynamicSketchMgr 变量（稍后在需要时赋值）
                 dynamic dynamicSketchMgr = null;
+                dynamic dynamicFeatureMgr = null;
 
-                // V8.8修复: 移除错误的 null 检查
-                // dynamicSketchMgr 在这里自然是 null，我们稍后会在需要时才获取
-                LogWarning("V8.9: 进入基准面选择循环（带延迟策略）");
-
-                // V8.9: 延迟策略 - 给零件时间完全初始化
-                LogWarning("V8.9: 步骤0 - 等待2秒，让零件完全初始化");
-                System.Threading.Thread.Sleep(2000);
-
-                // 尝试多个基准面名称（使用dynamic调用）
-                string[] planeNames = {
-                    "Front Plane",
-                    "前视基准面",
-                    "Plane1",
-                    "基准面1",
-                    "Front"
-                };
-
-                bool sketchCreated = false;
-
-                foreach (string planeName in planeNames)
+                // V9.0: 策略1 - 尝试激活文档后直接创建草图
+                LogWarning("V9.0: 策略1 - 尝试激活文档并直接创建草图");
+                try
                 {
-                    LogWarning("V8.9: 尝试基准面: '" + planeName + "'");
-
+                    // 尝试调用 IModelDoc2::EditActivate 激活文档
+                    LogWarning("V9.0: 步骤1a - 调用 EditActivate");
                     try
                     {
-                        // V8.1: 逐步诊断每个操作
-                        bool selected = false;
-
-                        // V8.9修复: 每次选择前再延迟500ms
-                        LogWarning("V8.9: 步骤1 - 延迟500ms");
-                        System.Threading.Thread.Sleep(500);
-
-                        // V8.6修复: 直接从 model 调用 SelectByID2，不使用 Extension
-                        LogWarning("V8.9: 步骤2 - 调用 model.SelectByID2");
-                        try
-                        {
-                            // 直接从 ModelDoc2 调用，不通过 Extension
-                            selected = dynamicModel.SelectByID2(planeName, "PLANE", 0.0, 0.0, 0.0, false, 0, null, 0);
-                            LogWarning("V8.9: 步骤2 - SelectByID2 完成，结果: " + selected);
-                        }
-                        catch (Exception selectEx)
-                        {
-                            LogWarning("V8.9: 步骤2 - SelectByID2 异常: " + selectEx.Message);
-
-                            // 如果直接调用失败，尝试通过 Extension
-                            LogWarning("V8.9: 步骤3 - 尝试通过 Extension.SelectByID2");
-                            try
-                            {
-                                dynamic dynamicExtension = dynamicModel.Extension;
-                                selected = dynamicExtension.SelectByID2(planeName, "PLANE", 0.0, 0.0, 0.0, false, 0, null, 0);
-                                LogWarning("V8.9: 步骤3 - Extension.SelectByID2 完成，结果: " + selected);
-                            }
-                            catch (Exception exEx)
-                            {
-                                LogWarning("V8.9: 步骤3 - Extension.SelectByID2 异常: " + exEx.Message);
-                                continue;  // 尝试下一个基准面名称
-                            }
-                        }
-
-                        if (selected)
-                        {
-                            LogWarning("V8.9: 基准面 '" + planeName + "' 选择成功");
-
-                            // V8.7修复: 延迟获取 SketchManager，在需要时才获取
-                            LogWarning("V8.9: 步骤4 - 延迟获取 SketchManager");
-                            try
-                            {
-                                dynamicSketchMgr = dynamicModel.SketchManager;
-                                LogWarning("V8.9: 步骤4 - SketchManager 直接获取成功");
-                            }
-                            catch
-                            {
-                                LogWarning("V8.9: 步骤4 - 直接获取失败，尝试 Extension");
-                                try
-                                {
-                                    dynamic dynamicExtension = dynamicModel.Extension;
-                                    dynamicSketchMgr = dynamicExtension.SketchManager;
-                                    LogWarning("V8.9: 步骤4 - 通过 Extension 获取 SketchManager 成功");
-                                }
-                                catch
-                                {
-                                    LogWarning("V8.9: 步骤4 - 所有方法获取 SketchManager 失败");
-                                    lastError = "无法获取 SketchManager";
-                                    return false;
-                                }
-                            }
-
-                            // 使用dynamic调用InsertSketch
-                            bool inserted = dynamicSketchMgr.InsertSketch(true);
-                            if (inserted)
-                            {
-                                inSketch = true;
-                                sketchMgr = dynamicSketchMgr;  // 保存强类型引用
-                                lastError = "";
-                                string successMsg = "V8.9成功: 在 '" + planeName + "' 上创建草图";
-                                LogSuccess(successMsg);
-                                return true;
-                            }
-                            else
-                            {
-                                LogWarning("V8.9: InsertSketch返回False");
-                            }
-                        }
-                        else
-                        {
-                            LogWarning("V8.9: SelectByID2返回False");
-                        }
+                        dynamicModel.EditActivate();
+                        LogWarning("V9.0: 步骤1a - EditActivate 成功");
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        LogWarning("V8.9: 基准面 '" + planeName + "' 异常: " + ex.Message);
+                        LogWarning("V9.0: 步骤1a - EditActivate 失败（可能不需要）");
                     }
-                }
 
-                // 如果选择基准面失败，尝试直接InsertSketch
-                if (!sketchCreated)
-                {
-                    LogWarning("V8.9: 所有基准面选择失败，尝试直接InsertSketch");
-
-                    // V8.7修复: 延迟获取 SketchManager
-                    LogWarning("V8.9: 步骤5 - 延迟获取 SketchManager（直接InsertSketch）");
+                    // 获取 SketchManager
+                    LogWarning("V9.0: 步骤1b - 获取 SketchManager");
                     try
                     {
                         dynamicSketchMgr = dynamicModel.SketchManager;
-                        LogWarning("V8.9: 步骤5 - SketchManager 直接获取成功");
+                        LogWarning("V9.0: 步骤1b - SketchManager 获取成功");
                     }
                     catch
                     {
@@ -698,46 +617,147 @@ namespace SWHelper
                         {
                             dynamic dynamicExtension = dynamicModel.Extension;
                             dynamicSketchMgr = dynamicExtension.SketchManager;
-                            LogWarning("V8.7: 通过 Extension 获取 SketchManager 成功");
+                            LogWarning("V9.0: 步骤1b - 通过 Extension 获取 SketchManager 成功");
                         }
                         catch
                         {
-                            LogWarning("V8.7: 无法获取 SketchManager");
-                            lastError = "无法获取 SketchManager";
-                            return false;
+                            LogWarning("V9.0: 步骤1b - 无法获取 SketchManager");
+                            throw new Exception("无法获取 SketchManager");
                         }
                     }
 
-                    try
+                    // 尝试直接插入草图（不选择基准面）
+                    LogWarning("V9.0: 步骤1c - 尝试直接 InsertSketch（无基准面）");
+                    bool inserted = dynamicSketchMgr.InsertSketch(true);
+                    if (inserted)
                     {
-                        bool directInserted = dynamicSketchMgr.InsertSketch(true);
-                        if (directInserted)
-                        {
-                            inSketch = true;
-                            sketchMgr = dynamicSketchMgr;
-                            lastError = "";
-                            LogSuccess("V8成功: 直接创建草图（无基准面选择）");
-                            return true;
-                        }
-                        else
-                        {
-                            LogWarning("V8: 直接InsertSketch返回False");
-                        }
+                        inSketch = true;
+                        sketchMgr = dynamicSketchMgr;
+                        lastError = "";
+                        LogSuccess("V9.0成功: 直接创建草图（策略1）");
+                        return true;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        LogWarning("V8: 直接InsertSketch异常: " + ex.Message);
+                        LogWarning("V9.0: 步骤1c - InsertSketch 返回 False");
                     }
                 }
+                catch (Exception ex1)
+                {
+                    LogWarning("V9.0: 策略1失败: " + ex1.Message);
+                }
 
-                // 所有方法都失败
-                string diagnosticInfo = lastError;
-                lastError = "V8: 所有草图创建方法都失败\n\n详细诊断：\n" + diagnosticInfo;
+                // V9.0: 策略2 - 尝试通过 FeatureManager 获取基准面特征并激活
+                LogWarning("V9.0: 策略2 - 通过 FeatureManager 获取基准面");
+                try
+                {
+                    // 获取 FeatureManager
+                    LogWarning("V9.0: 步骤2a - 获取 FeatureManager");
+                    try
+                    {
+                        dynamicFeatureMgr = dynamicModel.FeatureManager;
+                        LogWarning("V9.0: 步骤2a - FeatureManager 获取成功");
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            dynamic dynamicExtension = dynamicModel.Extension;
+                            dynamicFeatureMgr = dynamicExtension.FeatureManager;
+                            LogWarning("V9.0: 步骤2a - 通过 Extension 获取 FeatureManager 成功");
+                        }
+                        catch
+                        {
+                            LogWarning("V9.0: 步骤2a - 无法获取 FeatureManager");
+                            throw new Exception("无法获取 FeatureManager");
+                        }
+                    }
+
+                    // 尝试获取第一个特征（基准面）
+                    LogWarning("V9.0: 步骤2b - 获取第一个特征");
+                    dynamic firstFeature = dynamicFeatureMgr.GetFirstFeature(null);
+                    if (firstFeature != null)
+                    {
+                        LogWarning("V9.0: 步骤2b - 获取到第一个特征");
+
+                        // 尝试选择该特征
+                        LogWarning("V9.0: 步骤2c - 尝试选择特征");
+                        try
+                        {
+                            bool selected = firstFeature.Select2(false, null);
+                            if (selected)
+                            {
+                                LogWarning("V9.0: 步骤2c - 特征选择成功");
+
+                                // 获取 SketchManager 并插入草图
+                                if (dynamicSketchMgr == null)
+                                {
+                                    try
+                                    {
+                                        dynamicSketchMgr = dynamicModel.SketchManager;
+                                    }
+                                    catch
+                                    {
+                                        dynamic dynamicExtension = dynamicModel.Extension;
+                                        dynamicSketchMgr = dynamicExtension.SketchManager;
+                                    }
+                                }
+
+                                bool inserted = dynamicSketchMgr.InsertSketch(true);
+                                if (inserted)
+                                {
+                                    inSketch = true;
+                                    sketchMgr = dynamicSketchMgr;
+                                    lastError = "";
+                                    LogSuccess("V9.0成功: 通过 FeatureManager 选择基准面（策略2）");
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (Exception ex2c)
+                        {
+                            LogWarning("V9.0: 步骤2c - 特征选择失败: " + ex2c.Message);
+                        }
+                    }
+                    else
+                    {
+                        LogWarning("V9.0: 步骤2b - GetFirstFeature 返回 null");
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    LogWarning("V9.0: 策略2失败: " + ex2.Message);
+                }
+
+                // V9.0: 策略3 - 尝试使用 IModelDoc2::EditSketch 直接编辑
+                LogWarning("V9.0: 策略3 - 尝试直接编辑草图");
+                try
+                {
+                    LogWarning("V9.0: 步骤3a - 调用 EditSketch");
+                    dynamicModel.EditSketch(null);  // null 表示创建新草图
+                    LogWarning("V9.0: 步骤3a - EditSketch 调用成功");
+
+                    inSketch = true;
+                    lastError = "";
+                    LogSuccess("V9.0成功: 通过 EditSketch 创建草图（策略3）");
+                    return true;
+                }
+                catch (Exception ex3)
+                {
+                    LogWarning("V9.0: 策略3失败: " + ex3.Message);
+                }
+
+                // 所有策略都失败
+                lastError = "V9.0: 所有草图创建策略都失败\n" +
+                           "策略1（直接 InsertSketch）: 失败\n" +
+                           "策略2（FeatureManager）: 失败\n" +
+                           "策略3（EditSketch）: 失败\n" +
+                           "\n建议：可能需要手动选择基准面或使用 VBA 宏方式";
                 return false;
             }
             catch (Exception ex)
             {
-                lastError = "创建草图错误: " + ex.Message;
+                lastError = "V9.0 创建草图错误: " + ex.Message;
                 return false;
             }
         }
