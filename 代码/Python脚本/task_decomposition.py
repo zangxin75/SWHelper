@@ -63,16 +63,24 @@ class TaskDecomposer:
         """分解 CREATE 意图"""
         params = intent.parameters or {}
 
+        print(f"[DEBUG _decompose_create] START")
+        print(f"[DEBUG _decompose_create] intent.parameters = {intent.parameters}")
+        print(f"[DEBUG _decompose_create] params = {params}")
+
         # ENH-01: 支持装配体创建
         if intent.object == ObjectType.ASSEMBLY:
+            print(f"[DEBUG _decompose_create] Returning assembly decomposition")
             return self._decompose_create_assembly(intent)
 
         # ENH-02: 支持工程图创建
         if intent.object == ObjectType.DRAWING:
+            print(f"[DEBUG _decompose_create] Returning drawing decomposition")
             return self._decompose_create_drawing(intent)
 
         if intent.object != ObjectType.PART:
             raise ValueError(f"Unknown entity type: {intent.object}")
+
+        print(f"[DEBUG _decompose_create] This is a PART creation")
 
         # FIX-03: 为缺失参数提供默认值（支持简化的创建意图）
         if "name" not in params:
@@ -85,8 +93,20 @@ class TaskDecomposer:
                 params["type"] = "cube"  # 默认类型
 
         part_type = params["type"]
+        print(f"[DEBUG _decompose_create] part_type = {part_type}")
+        print(f"[DEBUG _decompose_create] params before dimensions = {params}")
 
         # FIX-03: 为缺失的尺寸参数提供默认值
+        # 从Intent的dimensions参数中提取尺寸
+        if "dimensions" in params and params["dimensions"]:
+            dims = params["dimensions"]
+            print(f"[DEBUG _decompose_create] Extracting dimensions: {dims}")
+            if len(dims) >= 3:
+                params["width"] = dims[0]
+                params["height"] = dims[1]
+                params["depth"] = dims[2]
+                print(f"[DEBUG _decompose_create] Set dimensions: width={params['width']}, height={params['height']}, depth={params['depth']}")
+
         if part_type == "cube":
             if "width" not in params:
                 params["width"] = 100.0
@@ -100,12 +120,19 @@ class TaskDecomposer:
             if "height" not in params:
                 params["height"] = 100.0
 
-        # 创建零件任务
+        print(f"[DEBUG _decompose_create] params BEFORE creating task: {params}")
+
+        # 创建零件任务 - 传递所有参数
         create_part_task = self._create_task(
             tool="create_part",
             description=f"Create part: {params['name']}",
-            parameters={"name": params["name"]}
+            parameters=params  # 传递完整的参数，包括dimensions
         )
+
+        print(f"[DEBUG _decompose_create] task.parameters = {create_part_task.parameters}")
+        print(f"[DEBUG _decompose_create] END")
+
+        return [create_part_task]
 
         # 创建草图任务
         sketch_plane = params.get("plane", "Front")

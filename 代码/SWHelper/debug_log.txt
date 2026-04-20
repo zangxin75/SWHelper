@@ -1,0 +1,57 @@
+[2026-04-21 00:10:40.393] SUCCESS: Connected to existing SolidWorks instance
+[2026-04-21 00:10:40.545] SUCCESS: Model对象已获取（Manager延迟初始化）
+[2026-04-21 00:10:40.545] WARNING: V6.1修复: 使用模板路径 = C:\ProgramData\SolidWorks\SolidWorks 2026\templates\gb_part.prtdot
+[2026-04-21 00:10:45.099] WARNING: V6.3: NewDocument 返回成功
+[2026-04-21 00:10:45.099] WARNING: V6.3: 步骤1 - 尝试 dynamic 转换
+[2026-04-21 00:10:45.099] WARNING: V6.3: 步骤1 - dynamic 转换成功
+[2026-04-21 00:10:45.099] WARNING: V6.3: 步骤2 - 尝试 ModelDoc2 转换
+[2026-04-21 00:10:45.114] WARNING: V6.3: 步骤2 - ModelDoc2 转换成功
+[2026-04-21 00:10:45.114] WARNING: V6.3: 步骤3 - 尝试获取标题
+[2026-04-21 00:10:45.287] WARNING: V6.3: 步骤3 - GetTitle 失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.287] WARNING: V6.3: 步骤4 - 尝试 InitializeManagers
+[2026-04-21 00:10:45.312] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
+[2026-04-21 00:10:45.334] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
+[2026-04-21 00:10:45.334] WARNING: V6.3: 步骤4 - InitializeManagers 成功
+[2026-04-21 00:10:45.335] SUCCESS: V6.3: 创建零件成功 (标题: (null))
+[2026-04-21 00:10:45.339] WARNING: V8.2: 开始 CreateSketch
+[2026-04-21 00:10:45.339] WARNING: V8.2: 步骤1 - 验证连接
+[2026-04-21 00:10:45.339] WARNING: V8.2: 步骤1 - 连接有效
+[2026-04-21 00:10:45.339] WARNING: V8.2: 步骤2 - 检查 model 对象
+[2026-04-21 00:10:45.347] WARNING: V8.2: 步骤2 - model 已存在
+[2026-04-21 00:10:45.347] WARNING: V8.2: 步骤3 - 初始化管理器
+[2026-04-21 00:10:45.350] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
+[2026-04-21 00:10:45.359] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
+[2026-04-21 00:10:45.359] WARNING: V8.2: 步骤3 - InitializeManagers 成功
+[2026-04-21 00:10:45.359] WARNING: V8策略：使用dynamic晚绑定
+[2026-04-21 00:10:45.359] WARNING: V8.7: 步骤1 - 创建 dynamicModel
+[2026-04-21 00:10:45.359] WARNING: V8.7: 步骤1 - dynamicModel 创建成功
+[2026-04-21 00:10:45.359] WARNING: V8.7: 步骤2 - 跳过 SketchManager 预获取，将在需要时获取
+[2026-04-21 00:10:45.359] WARNING: V8.8: 进入基准面选择循环
+[2026-04-21 00:10:45.359] WARNING: V8: 尝试基准面: 'Front Plane'
+[2026-04-21 00:10:45.359] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
+[2026-04-21 00:10:45.371] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.371] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
+[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.376] WARNING: V8: 尝试基准面: '前视基准面'
+[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
+[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
+[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.376] WARNING: V8: 尝试基准面: 'Plane1'
+[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
+[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
+[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.389] WARNING: V8: 尝试基准面: '基准面1'
+[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
+[2026-04-21 00:10:45.398] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.398] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
+[2026-04-21 00:10:45.398] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.404] WARNING: V8: 尝试基准面: 'Front'
+[2026-04-21 00:10:45.404] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
+[2026-04-21 00:10:45.406] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.406] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
+[2026-04-21 00:10:45.410] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:10:45.410] WARNING: V8: 所有基准面选择失败，尝试直接InsertSketch
+[2026-04-21 00:10:45.413] WARNING: V8.7: 延迟获取 SketchManager（直接InsertSketch）
+[2026-04-21 00:10:45.420] WARNING: V8.7: 无法获取 SketchManager

@@ -102,7 +102,16 @@ class AgentCoordinator:
         self.tool_registry = {}  # 将在执行器中注册
 
         # 5. 任务执行器
-        self.executor = TaskExecutor()
+        # ENH-07: 传递MCP配置
+        mcp_config = {
+            "command": "python",
+            "args": ["-m", "solidworks_mcp"],
+            "timeout": 30.0
+        }
+        self.executor = TaskExecutor(
+            use_real_mcp=self.use_real_mcp,
+            mcp_config=mcp_config
+        )
         self._register_tools()
 
         # 6. 结果验证器
@@ -377,11 +386,20 @@ class AgentCoordinator:
         time_breakdown = {}
 
         # 初始化结果
+        # ENH-07: 根据MCP连接状态确定模式
+        mode = "mock"
+        if self.use_real_mcp:
+            # 尝试连接MCP，如果失败则回退到mock
+            if self.executor._mcp_connected:
+                mode = "real_solidworks"
+            else:
+                mode = "mock_with_mcp_fallback"
+
         result = CoordinatorResult(
             success=False,
             feedback="",
             total_time=0.0,
-            mode="real_solidworks" if self.use_real_sw else "mock",
+            mode=mode,
             time_breakdown=time_breakdown
         )
 

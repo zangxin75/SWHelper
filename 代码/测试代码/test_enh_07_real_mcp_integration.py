@@ -114,21 +114,19 @@ class TestEnh07MCPInitialization:
         skip_if_no_sw()
 
         # Mock MCP连接
-        with patch('agent_coordinator.stdio_client') as mock_stdio:
-            with patch('agent_coordinator.ClientSession') as mock_session_cls:
-                # Mock session
-                mock_session = AsyncMock()
-                mock_session.initialize = AsyncMock()
-                mock_session.list_tools = AsyncMock(return_value={"tools": []})
-                mock_session.__aenter__ = AsyncMock(return_value=mock_session)
-                mock_session.__aexit__ = AsyncMock()
-                mock_session_cls.return_value = mock_session
+        with patch('task_executor.MCPClient') as mock_mcp_client_cls:
+            # Mock MCP client
+            mock_mcp_client = AsyncMock()
+            mock_mcp_client.connect = AsyncMock(return_value=True)
+            mock_mcp_client.is_connected = Mock(return_value=True)
+            mock_mcp_client.get_tool_count = Mock(return_value=0)
 
-                # Mock stdio_client context manager
-                mock_stdio.return_value.__aenter__ = AsyncMock(return_value=(None, None))
-                mock_stdio.return_value.__aexit__ = AsyncMock()
+            # Mock list_tools
+            mock_mcp_client.list_tools = AsyncMock(return_value=[])
 
-                try:
+            mock_mcp_client_cls.return_value = mock_mcp_client
+
+            try:
                     # 创建Coordinator with MCP
                     coordinator = AgentCoordinator(
                         use_real_sw=True  # use_real_sw会触发MCP模式（待实现）
@@ -143,10 +141,10 @@ class TestEnh07MCPInitialization:
                         # 预期失败的情况，这里应该抛出异常
                         pass
 
-                except Exception as e:
-                    if should_succeed:
-                        pytest.fail(f"{case_id}: Should not raise exception: {e}")
-                    # else: 预期的异常，正常
+            except Exception as e:
+                if should_succeed:
+                    pytest.fail(f"{case_id}: Should not raise exception: {e}")
+                # else: 预期的异常，正常
 
 
 class TestEnh07RealAPICalls:
@@ -164,42 +162,42 @@ class TestEnh07RealAPICalls:
         skip_if_no_mcp()
 
         # Mock MCP session和工具调用
-        with patch('agent_coordinator.stdio_client') as mock_stdio:
-            with patch('agent_coordinator.ClientSession') as mock_session_cls:
-                # Mock session
-                mock_session = AsyncMock()
-                mock_session.initialize = AsyncMock()
-                mock_session.list_tools = AsyncMock(return_value={"tools": [
-                    {"name": "sw_create_part", "description": "Create part"},
-                    {"name": "sw_create_assembly", "description": "Create assembly"},
-                    {"name": "sw_create_drawing", "description": "Create drawing"},
-                ]})
-                mock_session.call_tool = AsyncMock(return_value={
-                    "success": True,
-                    "result": "operation_successful"
-                })
-                mock_session.__aenter__ = AsyncMock(return_value=mock_session)
-                mock_session.__aexit__ = AsyncMock()
-                mock_session_cls.return_value = mock_session
+        with patch('task_executor.MCPClient') as mock_mcp_client_cls:
+            # Mock MCP client
+            mock_mcp_client = AsyncMock()
+            mock_mcp_client.connect = AsyncMock(return_value=True)
+            mock_mcp_client.is_connected = Mock(return_value=True)
+            mock_mcp_client.get_tool_count = Mock(return_value=3)
 
-                # Mock stdio_client
-                mock_stdio.return_value.__aenter__ = AsyncMock(return_value=(None, None))
-                mock_stdio.return_value.__aexit__ = AsyncMock()
+            # Mock list_tools
+            mock_mcp_client.list_tools = AsyncMock(return_value=[
+                {"name": "sw_create_part", "description": "Create part"},
+                {"name": "sw_create_assembly", "description": "Create assembly"},
+                {"name": "sw_create_drawing", "description": "Create drawing"},
+            ])
 
-                # 创建Coordinator
-                coordinator = AgentCoordinator(
-                    use_real_sw=True  # use_real_sw会触发MCP模式（待实现）
-                )
+            # Mock call_tool
+            mock_mcp_client.call_tool = AsyncMock(return_value={
+                "success": True,
+                "result": "operation_successful"
+            })
 
-                # 执行请求
-                result = coordinator.process_design_request(user_input)
+            mock_mcp_client_cls.return_value = mock_mcp_client
 
-                # 验证成功
-                assert result.success, f"{case_id}: Should succeed"
+            # 创建Coordinator
+            coordinator = AgentCoordinator(
+                use_real_sw=True  # use_real_sw会触发MCP模式（待实现）
+            )
 
-                # 验证MCP工具被调用
-                # (具体验证取决于实现)
-                # assert mock_session.call_tool.called, f"{case_id}: MCP tool should be called"
+            # 执行请求
+            result = coordinator.process_design_request(user_input)
+
+            # 验证成功
+            assert result.success, f"{case_id}: Should succeed"
+
+            # 验证MCP工具被调用
+            # (具体验证取决于实现)
+            # assert mock_session.call_tool.called, f"{case_id}: MCP tool should be called"
 
 
 class TestEnh07ErrorHandling:
@@ -211,63 +209,53 @@ class TestEnh07ErrorHandling:
     def test_error_handling(self, case_id, description, scenario, expected_error_type):
         """测试错误处理"""
         # Mock不同错误场景
-        with patch('agent_coordinator.stdio_client') as mock_stdio:
-            with patch('agent_coordinator.ClientSession') as mock_session_cls:
-                # Mock session
-                mock_session = AsyncMock()
+        with patch('task_executor.MCPClient') as mock_mcp_client_cls:
+            # Mock MCP client instance
+            mock_mcp_client = AsyncMock()
 
-                if scenario == "sw_not_running":
-                    # Mock SolidWorks未运行错误
-                    mock_session.initialize = AsyncMock(
-                        side_effect=Exception("SolidWorks not running")
-                    )
-                elif scenario == "mcp_timeout":
-                    # Mock超时错误
-                    mock_session.initialize = AsyncMock(
-                        side_effect=TimeoutError("MCP connection timeout")
-                    )
-                elif scenario == "api_error":
-                    # Mock API调用错误
-                    mock_session.initialize = AsyncMock()
-                    mock_session.call_tool = AsyncMock(
-                        side_effect=Exception("SW API error")
-                    )
-                else:
-                    mock_session.initialize = AsyncMock()
+            if scenario == "sw_not_running":
+                # Mock SolidWorks未运行错误
+                mock_mcp_client.connect = AsyncMock(side_effect=Exception("SolidWorks not running"))
+            elif scenario == "mcp_timeout":
+                # Mock超时错误
+                mock_mcp_client.connect = AsyncMock(side_effect=TimeoutError("MCP connection timeout"))
+            elif scenario == "api_error":
+                # Mock API调用错误
+                mock_mcp_client.connect = AsyncMock(return_value=True)
+                mock_mcp_client.call_tool = AsyncMock(
+                    side_effect=Exception("SW API error")
+                )
+                mock_mcp_client.is_connected = Mock(return_value=True)
+            else:
+                mock_mcp_client.connect = AsyncMock()
 
-                mock_session.__aenter__ = AsyncMock(return_value=mock_session)
-                mock_session.__aexit__ = AsyncMock()
-                mock_session_cls.return_value = mock_session
+            mock_mcp_client_cls.return_value = mock_mcp_client
 
-                # Mock stdio_client
-                mock_stdio.return_value.__aenter__ = AsyncMock(return_value=(None, None))
-                mock_stdio.return_value.__aexit__ = AsyncMock()
+            try:
+                # 创建Coordinator
+                coordinator = AgentCoordinator(
+                    use_real_mcp=True,
+                    use_real_sw=True
+                )
 
-                try:
-                    # 创建Coordinator
-                    coordinator = AgentCoordinator(
-                        use_real_mcp=True,
-                        use_real_sw=True
-                    )
+                # 执行简单请求
+                result = coordinator.process_design_request("创建一个方块")
 
-                    # 执行简单请求
-                    result = coordinator.process_design_request("创建一个方块")
+                # 验证错误被优雅处理
+                # 应该返回失败但不崩溃
+                assert result is not None, f"{case_id}: Should return result, not crash"
 
-                    # 验证错误被优雅处理
-                    # 应该返回失败但不崩溃
-                    assert result is not None, f"{case_id}: Should return result, not crash"
+                if not result.success:
+                    # 验证错误信息
+                    assert result.error_type is not None, f"{case_id}: Should have error type"
+                    # 验证错误类型匹配（可选，根据实现调整）
+                    # assert result.error_type == expected_error_type, f"{case_id}: Error type mismatch"
 
-                    if not result.success:
-                        # 验证错误信息
-                        assert result.error_type is not None, f"{case_id}: Should have error type"
-                        # 验证错误类型匹配（可选，根据实现调整）
-                        # assert result.error_type == expected_error_type, f"{case_id}: Error type mismatch"
-
-                except Exception as e:
-                    # 某些错误可能被抛出，这是可以接受的
-                    # 只要不是未处理的异常
-                    assert expected_error_type in type(e).__name__ or "Error" in type(e).__name__, \
-                        f"{case_id}: Should handle errors gracefully"
+            except Exception as e:
+                # 某些错误可能被抛出，这是可以接受的
+                # 只要不是未处理的异常
+                assert expected_error_type in type(e).__name__ or "Error" in type(e).__name__, \
+                    f"{case_id}: Should handle errors gracefully"
 
 
 class TestEnh07E2EWorkflow:
@@ -284,56 +272,53 @@ class TestEnh07E2EWorkflow:
         skip_if_no_mcp()
 
         # Mock完整的MCP工作流
-        with patch('agent_coordinator.stdio_client') as mock_stdio:
-            with patch('agent_coordinator.ClientSession') as mock_session_cls:
-                # Mock session
-                mock_session = AsyncMock()
-                mock_session.initialize = AsyncMock()
-                mock_session.list_tools = AsyncMock(return_value={"tools": [
-                    {"name": "sw_create_part", "description": "Create part"},
-                    {"name": "sw_create_assembly", "description": "Create assembly"},
-                    {"name": "sw_create_drawing", "description": "Create drawing"},
-                    {"name": "sw_add_dimensions", "description": "Add dimensions"},
-                ]})
+        with patch('task_executor.MCPClient') as mock_mcp_client_cls:
+            # Mock MCP client
+            mock_mcp_client = AsyncMock()
+            mock_mcp_client.connect = AsyncMock(return_value=True)
+            mock_mcp_client.is_connected = Mock(return_value=True)
+            mock_mcp_client.get_tool_count = Mock(return_value=4)
 
-                # Mock不同的工具调用
-                async def mock_call_tool(tool_name, args):
-                    return {
-                        "success": True,
-                        "result": f"{tool_name}_completed",
-                        "execution_time": 0.5
-                    }
+            # Mock list_tools
+            mock_mcp_client.list_tools = AsyncMock(return_value=[
+                {"name": "sw_create_part", "description": "Create part"},
+                {"name": "sw_create_assembly", "description": "Create assembly"},
+                {"name": "sw_create_drawing", "description": "Create drawing"},
+                {"name": "sw_add_dimensions", "description": "Add dimensions"},
+            ])
 
-                mock_session.call_tool = AsyncMock(side_effect=mock_call_tool)
-                mock_session.__aenter__ = AsyncMock(return_value=mock_session)
-                mock_session.__aexit__ = AsyncMock()
-                mock_session_cls.return_value = mock_session
+            # Mock call_tool
+            async def mock_call_tool(tool_name, args):
+                return {
+                    "success": True,
+                    "result": f"{tool_name}_completed",
+                    "execution_time": 0.5
+                }
 
-                # Mock stdio_client
-                mock_stdio.return_value.__aenter__ = AsyncMock(return_value=(None, None))
-                mock_stdio.return_value.__aexit__ = AsyncMock()
+            mock_mcp_client.call_tool = AsyncMock(side_effect=mock_call_tool)
+            mock_mcp_client_cls.return_value = mock_mcp_client
 
-                # 创建Coordinator
-                coordinator = AgentCoordinator(
-                    use_real_sw=True  # use_real_sw会触发MCP模式（待实现）
-                )
+            # 创建Coordinator
+            coordinator = AgentCoordinator(
+                use_real_sw=True  # use_real_sw会触发MCP模式（待实现）
+            )
 
-                # 执行请求
-                result = coordinator.process_design_request(user_input)
+            # 执行请求
+            result = coordinator.process_design_request(user_input)
 
-                # 验证成功
-                assert result.success, f"{case_id}: E2E workflow should succeed"
-                assert result.tasks_executed >= min_tasks, \
-                    f"{case_id}: Should execute at least {min_tasks} task(s)"
+            # 验证成功
+            assert result.success, f"{case_id}: E2E workflow should succeed"
+            assert result.tasks_executed >= min_tasks, \
+                f"{case_id}: Should execute at least {min_tasks} task(s)"
 
-                # 验证任务被执行
-                assert result.tasks is not None, f"{case_id}: Tasks should not be None"
-                assert len(result.tasks) >= min_tasks, f"{case_id}: Should have {min_tasks}+ task(s)"
+            # 验证任务被执行
+            assert result.tasks is not None, f"{case_id}: Tasks should not be None"
+            assert len(result.tasks) >= min_tasks, f"{case_id}: Should have {min_tasks}+ task(s)"
 
-                # 验证执行结果
-                if result.execution_results:
-                    assert len(result.execution_results) >= min_tasks, \
-                        f"{case_id}: Should have {min_tasks}+ execution result(s)"
+            # 验证执行结果
+            if result.execution_results:
+                assert len(result.execution_results) >= min_tasks, \
+                    f"{case_id}: Should have {min_tasks}+ execution result(s)"
 
 
 class TestEnh07MockFallback:
