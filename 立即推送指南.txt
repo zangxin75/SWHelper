@@ -1,0 +1,98 @@
+# 🚀 立即推送到 GitHub - zangxin75
+
+## ⚡ 最快方法（2分钟完成）
+
+### 步骤 1: 在 GitHub 创建仓库（1分钟）
+
+打开浏览器访问:
+```
+https://github.com/new
+```
+
+填写:
+```
+Repository name:  SWHelper
+Description:      SolidWorks 2026 自动化设计系统
+Public / Private: 选择一个
+```
+
+⚠️ **重要**: 不要勾选 "Add a README file"
+
+点击: **Create repository**
+
+### 步骤 2: 创建 Token（30秒）
+
+打开新标签页:
+```
+https://github.com/settings/tokens
+```
+
+1. 点击 "Generate new token" → "Generate new token (classic)"
+2. Name: `SWHelper Push`
+3. 勾选: ✅ `repo`
+4. 点击 "Generate token"
+5. **复制 token**（只显示一次！保存到记事本）
+
+### 步骤 3: 一键推送（10秒）
+
+**双击运行**:
+```
+D:\sw2026\一键推送.bat
+```
+
+或在命令行运行:
+```bash
+cd D:\sw2026
+一键推送.bat
+```
+
+**提示输入时**:
+- Username: `zangxin75`
+- Password: `粘贴你的 Token`
+
+### ✅ 完成！
+
+推送成功后会自动打开浏览器:
+```
+https://github.com/zangxin75/SWHelper
+```
+
+---
+
+## 🎯 GitHub CLI 方法（需要先登录）
+
+**在新PowerShell窗口中**:
+```powershell
+cd D:\sw2026
+gh auth login
+gh repo create SWHelper --public --source=. --remote=origin --push
+```
+
+---
+
+## 📝 检查清单
+
+推送完成后，访问 https://github.com/zangxin75/SWHelper 检查:
+
+- [ ] README.md 显示完整
+- [ ] 代码目录结构完整
+- [ ] LICENSE 文件存在
+- [ ] 提交历史显示
+- [ ] 没有红色错误提示
+
+---
+
+## ❓ 常见问题
+
+**Q: 提示 "Repository not found"**
+A: 需要先在 GitHub 网站创建仓库（见步骤1）
+
+**Q: 提示 "Authentication failed"**
+A: Token 无效或输入错误，重新创建 Token（见步骤2）
+
+**Q: 提示 "Token expired"**
+A: Token 过期了，创建新的 Token
+
+---
+
+准备好了吗？开始推送！🚀
