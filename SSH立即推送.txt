@@ -1,0 +1,82 @@
+# 🔐 SSH 推送 - 完整步骤
+
+## ⚡ 3步完成（2分钟）
+
+### 步骤 1: 添加 SSH 密钥到 GitHub
+
+**打开浏览器访问**:
+```
+https://github.com/settings/ssh/new
+```
+
+**填写**:
+- Title: `SWHelper-PC`
+- Key type: Authentication Key
+- Key: 复制下面的公钥（整行）
+
+```
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEnwQmhhryzPNy3CgBK5pdEQyydSP5kjvPhivevHPIzq zangxin75@github
+```
+
+点击: **Add SSH key**
+
+### 步骤 2: 在 GitHub 创建仓库
+
+**打开新标签页访问**:
+```
+https://github.com/new
+```
+
+**填写**:
+- Repository name: `SWHelper`
+- Description: `SolidWorks 2026 自动化设计系统`
+- 选择 Public 或 Private
+
+⚠️ **重要**: 不要勾选 "Add a README file"
+
+点击: **Create repository**
+
+### 步骤 3: 一键推送
+
+**双击运行**:
+```
+D:\sw2026\ssh_push.bat
+```
+
+或在命令行运行:
+```bash
+cd D:\sw2026
+ssh_push.bat
+```
+
+---
+
+## ✅ 完成！
+
+推送成功后访问:
+```
+https://github.com/zangxin75/SWHelper
+```
+
+---
+
+## 🎯 手动命令（如果脚本失败）
+
+```bash
+cd D:\sw2026
+git remote set-url origin git@github.com:zangxin75/SWHelper.git
+git push -u origin master
+```
+
+---
+
+## 🔑 SSH 密钥信息
+
+- **类型**: ed25519 (推荐)
+- **位置**: `C:\Users\zhy\.ssh\id_ed25519`
+- **公钥**: 见步骤 1
+- **生成时间**: 2026-04-21
+
+---
+
+准备好了吗？开始推送！🚀
