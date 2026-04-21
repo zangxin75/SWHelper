@@ -1,0 +1,37 @@
+# 立即推送到GitHub - 执行清单
+
+## 步骤1: 在GitHub创建仓库（30秒）
+
+1. 访问: https://github.com/new
+2. 填写信息:
+   - Repository name: SWHelper
+   - Description: SolidWorks 2026 自动化设计系统
+   - 选择 Public 或 Private
+3. 重要: 不要勾选 "Add a README file"
+4. 点击 "Create repository"
+
+## 步骤2: 创建Personal Access Token（1分钟）
+
+1. 访问: https://github.com/settings/tokens
+2. 点击 "Generate new token" → "Generate new token (classic)"
+3. 设置:
+   - Name: SWHelper Push
+   - Expiration: 90 days
+   - 勾选 ✅ repo (完整仓库访问权限)
+4. 点击 "Generate token"
+5. 复制token (只显示一次！保存好)
+
+## 步骤3: 执行推送命令（在PowerShell中）
+
+# 替换YOUR_USERNAME为你的GitHub用户名
+cd D:\sw2026
+git remote add origin https://github.com/YOUR_USERNAME/SWHelper.git
+git push -u origin master
+
+# 提示输入时:
+# Username: YOUR_GITHUB_USERNAME
+# Password: 粘贴你的Personal Access Token
+
+## 完成!
+
+访问: https://github.com/YOUR_USERNAME/SWHelper
