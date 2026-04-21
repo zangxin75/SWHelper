@@ -1,0 +1,20 @@
+# SWHelper Python Dependencies
+
+# Windows COM Interface
+pywin32>=306
+
+# Testing Framework
+pytest>=9.0.3
+pytest-asyncio>=0.23.0
+
+# Claude API (Optional - for conversational design)
+anthropic>=0.40.0
+
+# Type Hints
+typing-extensions>=4.8.0
+
+# Logging
+python-json-logger>=2.0.7
+
+# Utilities
+python-dotenv>=1.0.0
