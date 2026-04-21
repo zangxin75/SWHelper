@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Claude Code session data
+.omc/sessions/
+.omc/state/sessions/
+
+# SolidWorks temporary files
+*.SLDPRT
+*.SLDDRW
+*.SLDASM
+~$*
+
+# Project temporary files
+test_*.py
+final_*.py
+*_temp.py
+
+# Status reports (duplicate documentation)
+CURRENT_STATUS.md
+FINAL_*.md
+HONEST_*.md
+README_CURRENT_STATUS.md
+QUICK_REFERENCE.md
+SELECTBYID2_BREAKTHROUGH.md
+START_HERE.md
+
+# Chinese-named docs (will use English versions)
+V14.0_测试指南.md
+V*._测试*.md
+
+# Debug logs
+debug_log.txt
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build artifacts
+代码/SWHelper/bin/
+代码/SWHelper/obj/
+*.dll
+*.pdb
+
+# Keep project memory but ignore session state
+!.omc/project-memory.json
