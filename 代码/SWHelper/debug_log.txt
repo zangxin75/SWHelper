@@ -1,57 +1,136 @@
-[2026-04-21 00:10:40.393] SUCCESS: Connected to existing SolidWorks instance
-[2026-04-21 00:10:40.545] SUCCESS: Model对象已获取（Manager延迟初始化）
-[2026-04-21 00:10:40.545] WARNING: V6.1修复: 使用模板路径 = C:\ProgramData\SolidWorks\SolidWorks 2026\templates\gb_part.prtdot
-[2026-04-21 00:10:45.099] WARNING: V6.3: NewDocument 返回成功
-[2026-04-21 00:10:45.099] WARNING: V6.3: 步骤1 - 尝试 dynamic 转换
-[2026-04-21 00:10:45.099] WARNING: V6.3: 步骤1 - dynamic 转换成功
-[2026-04-21 00:10:45.099] WARNING: V6.3: 步骤2 - 尝试 ModelDoc2 转换
-[2026-04-21 00:10:45.114] WARNING: V6.3: 步骤2 - ModelDoc2 转换成功
-[2026-04-21 00:10:45.114] WARNING: V6.3: 步骤3 - 尝试获取标题
-[2026-04-21 00:10:45.287] WARNING: V6.3: 步骤3 - GetTitle 失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.287] WARNING: V6.3: 步骤4 - 尝试 InitializeManagers
-[2026-04-21 00:10:45.312] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
-[2026-04-21 00:10:45.334] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
-[2026-04-21 00:10:45.334] WARNING: V6.3: 步骤4 - InitializeManagers 成功
-[2026-04-21 00:10:45.335] SUCCESS: V6.3: 创建零件成功 (标题: (null))
-[2026-04-21 00:10:45.339] WARNING: V8.2: 开始 CreateSketch
-[2026-04-21 00:10:45.339] WARNING: V8.2: 步骤1 - 验证连接
-[2026-04-21 00:10:45.339] WARNING: V8.2: 步骤1 - 连接有效
-[2026-04-21 00:10:45.339] WARNING: V8.2: 步骤2 - 检查 model 对象
-[2026-04-21 00:10:45.347] WARNING: V8.2: 步骤2 - model 已存在
-[2026-04-21 00:10:45.347] WARNING: V8.2: 步骤3 - 初始化管理器
-[2026-04-21 00:10:45.350] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
-[2026-04-21 00:10:45.359] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
-[2026-04-21 00:10:45.359] WARNING: V8.2: 步骤3 - InitializeManagers 成功
-[2026-04-21 00:10:45.359] WARNING: V8策略：使用dynamic晚绑定
-[2026-04-21 00:10:45.359] WARNING: V8.7: 步骤1 - 创建 dynamicModel
-[2026-04-21 00:10:45.359] WARNING: V8.7: 步骤1 - dynamicModel 创建成功
-[2026-04-21 00:10:45.359] WARNING: V8.7: 步骤2 - 跳过 SketchManager 预获取，将在需要时获取
-[2026-04-21 00:10:45.359] WARNING: V8.8: 进入基准面选择循环
-[2026-04-21 00:10:45.359] WARNING: V8: 尝试基准面: 'Front Plane'
-[2026-04-21 00:10:45.359] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
-[2026-04-21 00:10:45.371] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.371] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
-[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.376] WARNING: V8: 尝试基准面: '前视基准面'
-[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
-[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
-[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.376] WARNING: V8: 尝试基准面: 'Plane1'
-[2026-04-21 00:10:45.376] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
-[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
-[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.389] WARNING: V8: 尝试基准面: '基准面1'
-[2026-04-21 00:10:45.389] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
-[2026-04-21 00:10:45.398] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.398] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
-[2026-04-21 00:10:45.398] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.404] WARNING: V8: 尝试基准面: 'Front'
-[2026-04-21 00:10:45.404] WARNING: V8.6: 步骤1 - 调用 model.SelectByID2
-[2026-04-21 00:10:45.406] WARNING: V8.6: 步骤1 - SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.406] WARNING: V8.6: 步骤2 - 尝试通过 Extension.SelectByID2
-[2026-04-21 00:10:45.410] WARNING: V8.6: 步骤2 - Extension.SelectByID2 异常: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
-[2026-04-21 00:10:45.410] WARNING: V8: 所有基准面选择失败，尝试直接InsertSketch
-[2026-04-21 00:10:45.413] WARNING: V8.7: 延迟获取 SketchManager（直接InsertSketch）
-[2026-04-21 00:10:45.420] WARNING: V8.7: 无法获取 SketchManager
+﻿[2026-04-21 00:55:42.125] SUCCESS: Created new SolidWorks instance
+[2026-04-21 00:55:42.783] WARNING: No active document to refresh
+[2026-04-21 00:55:42.794] WARNING: V6.1修复: 使用模板路径 = C:\ProgramData\SolidWorks\SolidWorks 2026\templates\gb_part.prtdot
+[2026-04-21 00:55:46.492] WARNING: V6.3: NewDocument 返回成功
+[2026-04-21 00:55:46.492] WARNING: V6.3: 步骤1 - 尝试 dynamic 转换
+[2026-04-21 00:55:46.492] WARNING: V6.3: 步骤1 - dynamic 转换成功
+[2026-04-21 00:55:46.492] WARNING: V6.3: 步骤2 - 尝试 ModelDoc2 转换
+[2026-04-21 00:55:46.503] WARNING: V6.3: 步骤2 - ModelDoc2 转换成功
+[2026-04-21 00:55:46.505] WARNING: V12.0: 步骤2b - 延迟 + 重建 COM 对象
+[2026-04-21 00:55:46.536] WARNING: V12.0: EditActivate 失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:55:46.536] WARNING: V12.0: 强制刷新 ActiveDoc 成功
+[2026-04-21 00:55:46.543] WARNING: V12.0: 访问 Visible 属性失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:55:46.543] WARNING: V6.3: 步骤3 - 尝试获取标题
+[2026-04-21 00:55:46.572] WARNING: V6.3: 步骤3 - GetTitle 失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 00:55:46.572] WARNING: V6.3: 步骤4 - 尝试 InitializeManagers
+[2026-04-21 00:55:46.727] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
+[2026-04-21 00:55:46.760] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
+[2026-04-21 00:55:46.760] WARNING: V6.3: 步骤4 - InitializeManagers 成功
+[2026-04-21 00:55:46.760] WARNING: V12.0: 等待 SolidWorks 完全初始化文档 (3秒)
+[2026-04-21 00:55:49.769] WARNING: V12.0: 重建 model 引用成功
+[2026-04-21 00:55:49.769] SUCCESS: V12.0: 创建零件成功，已完成初始化等待
+[2026-04-21 00:55:49.769] WARNING: V12.0: 开始 CreateSketch - 延迟 + 重建连接
+[2026-04-21 00:55:49.769] WARNING: V12.0: 步骤0 - 等待文档初始化 (2秒)
+[2026-04-21 00:55:51.786] WARNING: V12.0: 步骤1 - 验证连接
+[2026-04-21 00:55:51.787] WARNING: V12.0: 步骤1 - 连接有效
+[2026-04-21 00:55:51.787] WARNING: V12.0: 步骤2 - 重建 model 对象
+[2026-04-21 00:55:52.288] WARNING: V12.0: 步骤2 - model 对象已重建
+[2026-04-21 00:55:52.289] WARNING: V12.0: 步骤3 - 初始化管理器
+[2026-04-21 00:55:52.297] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
+[2026-04-21 00:55:52.306] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
+[2026-04-21 00:55:52.306] WARNING: V12.0: 步骤3 - InitializeManagers 成功
+[2026-04-21 00:55:52.306] WARNING: V12.0策略：延迟 + 重建 + 智能基准面选择
+[2026-04-21 00:55:52.306] WARNING: V12.0: 步骤4 - 创建 dynamicModel
+[2026-04-21 00:55:52.306] WARNING: V12.0: 策略1 - 直接获取 SketchManager（使用重建后的 model）
+[2026-04-21 00:55:52.306] WARNING: V12.0: 步骤4a - 获取 SketchManager
+[2026-04-21 00:55:52.320] WARNING: V12.0: 步骤4a - 无法获取 SketchManager
+[2026-04-21 00:55:52.320] WARNING: V12.0: 策略1失败: 无法获取 SketchManager
+[2026-04-21 00:55:52.320] WARNING: V12.0: 策略2 - 通过 FeatureManager 获取基准面
+[2026-04-21 00:55:52.320] WARNING: V12.0: 步骤2a - 获取 FeatureManager
+[2026-04-21 00:55:52.334] WARNING: V12.0: 步骤2a - 无法获取 FeatureManager
+[2026-04-21 00:55:52.334] WARNING: V12.0: 策略2失败: 无法获取 FeatureManager
+[2026-04-21 00:55:52.334] WARNING: V12.0: 策略3 - 尝试直接编辑草图
+[2026-04-21 00:55:52.334] WARNING: V12.0: 步骤3a - 调用 EditSketch
+[2026-04-21 00:55:52.342] WARNING: V12.0: 策略3失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 01:10:17.308] SUCCESS: Created new SolidWorks instance
+[2026-04-21 01:10:17.817] WARNING: No active document to refresh
+[2026-04-21 01:10:17.838] WARNING: V6.1修复: 使用模板路径 = C:\ProgramData\SolidWorks\SolidWorks 2026\templates\gb_part.prtdot
+[2026-04-21 01:10:21.791] WARNING: V6.3: NewDocument 返回成功
+[2026-04-21 01:10:21.791] WARNING: V6.3: 步骤1 - 尝试 dynamic 转换
+[2026-04-21 01:10:21.791] WARNING: V6.3: 步骤1 - dynamic 转换成功
+[2026-04-21 01:10:21.791] WARNING: V6.3: 步骤2 - 尝试 ModelDoc2 转换
+[2026-04-21 01:10:21.794] WARNING: V6.3: 步骤2 - ModelDoc2 转换成功
+[2026-04-21 01:10:21.794] WARNING: V13.0: 步骤2b - 使用官方推荐的 ActivateDoc 方法
+[2026-04-21 01:10:21.850] WARNING: V13.0: 步骤2b-1 - 无法获取文档标题: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 01:10:21.850] WARNING: V13.0: 步骤2b-1 - 使用模板名称: gb_part
+[2026-04-21 01:10:21.851] WARNING: V13.0: 步骤2b-2 - ActivateDoc 返回 null，文档可能已激活
+[2026-04-21 01:10:22.358] WARNING: V6.3: 步骤3 - 尝试获取标题
+[2026-04-21 01:10:22.362] WARNING: V6.3: 步骤3 - GetTitle 失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 01:10:22.362] WARNING: V6.3: 步骤4 - 尝试 InitializeManagers
+[2026-04-21 01:10:22.389] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
+[2026-04-21 01:10:22.408] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
+[2026-04-21 01:10:22.408] WARNING: V6.3: 步骤4 - InitializeManagers 成功
+[2026-04-21 01:10:22.408] WARNING: V12.0: 等待 SolidWorks 完全初始化文档 (3秒)
+[2026-04-21 01:10:25.424] WARNING: V12.0: 重建 model 引用成功
+[2026-04-21 01:10:25.424] SUCCESS: V12.0: 创建零件成功，已完成初始化等待
+[2026-04-21 01:10:26.430] WARNING: V13.0: 开始 CreateSketch - 基于官方文档的正确方法
+[2026-04-21 01:10:26.430] WARNING: V13.0: 步骤1 - 验证连接和文档
+[2026-04-21 01:10:26.434] WARNING: V13.0: 步骤1 - 连接和文档有效
+[2026-04-21 01:10:26.434] WARNING: V13.0: 步骤2 - 直接访问 SketchManager（文档已在 CreatePart 中正确激活）
+[2026-04-21 01:10:26.434] WARNING: V13.0: 步骤2a - 获取 SketchManager
+[2026-04-21 01:10:26.447] WARNING: V13.0: 步骤2a - 直接获取失败，尝试 Extension: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 01:10:26.457] ERROR: V13.0: 步骤2a - 所有方法都失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 01:12:28.761] SUCCESS: Created new SolidWorks instance
+[2026-04-21 01:12:29.189] WARNING: No active document to refresh
+[2026-04-21 01:15:15.043] SUCCESS: Created new SolidWorks instance
+[2026-04-21 01:15:15.682] WARNING: No active document to refresh
+[2026-04-21 01:16:06.465] SUCCESS: Created new SolidWorks instance
+[2026-04-21 01:16:07.118] WARNING: No active document to refresh
+[2026-04-21 01:16:30.517] SUCCESS: Connected to existing SolidWorks instance
+[2026-04-21 01:16:30.670] SUCCESS: Model对象已获取（Manager延迟初始化）
+[2026-04-21 01:16:30.677] WARNING: V13.0: 开始 CreateSketch - 基于官方文档的正确方法
+[2026-04-21 01:16:30.677] WARNING: V13.0: 步骤1 - 验证连接和文档
+[2026-04-21 01:16:30.679] WARNING: V13.0: 步骤1 - 连接和文档有效
+[2026-04-21 01:16:30.679] WARNING: V13.0: 步骤2 - 直接访问 SketchManager（文档已在 CreatePart 中正确激活）
+[2026-04-21 01:16:30.679] WARNING: V13.0: 步骤2a - 获取 SketchManager
+[2026-04-21 01:16:30.697] WARNING: V13.0: 步骤2a - 直接获取失败，尝试 Extension: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 01:16:30.709] ERROR: V13.0: 步骤2a - 所有方法都失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 10:46:33.477] SUCCESS: Created new SolidWorks instance
+[2026-04-21 10:46:34.011] WARNING: No active document to refresh
+[2026-04-21 10:46:34.032] WARNING: V6.1修复: 使用模板路径 = C:\ProgramData\SolidWorks\SolidWorks 2026\templates\gb_part.prtdot
+[2026-04-21 10:46:39.571] WARNING: V6.3: NewDocument 返回成功
+[2026-04-21 10:46:39.571] WARNING: V6.3: 步骤1 - 尝试 dynamic 转换
+[2026-04-21 10:46:39.571] WARNING: V6.3: 步骤1 - dynamic 转换成功
+[2026-04-21 10:46:39.571] WARNING: V6.3: 步骤2 - 尝试 ModelDoc2 转换
+[2026-04-21 10:46:39.584] WARNING: V6.3: 步骤2 - ModelDoc2 转换成功
+[2026-04-21 10:46:39.591] WARNING: V13.0: 步骤2b - 使用官方推荐的 ActivateDoc 方法
+[2026-04-21 10:46:39.634] WARNING: V13.0: 步骤2b-1 - 无法获取文档标题: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 10:46:39.634] WARNING: V13.0: 步骤2b-1 - 使用模板名称: gb_part
+[2026-04-21 10:46:39.635] WARNING: V13.0: 步骤2b-2 - ActivateDoc 返回 null，文档可能已激活
+[2026-04-21 10:46:40.144] WARNING: V6.3: 步骤3 - 尝试获取标题
+[2026-04-21 10:46:40.155] WARNING: V6.3: 步骤3 - GetTitle 失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 10:46:40.155] WARNING: V6.3: 步骤4 - 尝试 InitializeManagers
+[2026-04-21 10:46:40.220] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
+[2026-04-21 10:46:40.252] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
+[2026-04-21 10:46:40.252] WARNING: V6.3: 步骤4 - InitializeManagers 成功
+[2026-04-21 10:46:40.252] WARNING: V12.0: 等待 SolidWorks 完全初始化文档 (3秒)
+[2026-04-21 10:46:43.255] WARNING: V12.0: 重建 model 引用成功
+[2026-04-21 10:46:43.255] SUCCESS: V12.0: 创建零件成功，已完成初始化等待
+[2026-04-21 10:46:43.273] WARNING: V13.0: 开始 CreateSketch - 基于官方文档的正确方法
+[2026-04-21 10:46:43.273] WARNING: V13.0: 步骤1 - 验证连接和文档
+[2026-04-21 10:46:43.282] WARNING: V13.0: 步骤1 - 连接和文档有效
+[2026-04-21 10:46:43.282] WARNING: V13.0: 步骤2 - 直接访问 SketchManager（文档已在 CreatePart 中正确激活）
+[2026-04-21 10:46:43.282] WARNING: V13.0: 步骤2a - 获取 SketchManager
+[2026-04-21 10:46:43.291] WARNING: V13.0: 步骤2a - 直接获取失败，尝试 Extension: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 10:46:43.303] ERROR: V13.0: 步骤2a - 所有方法都失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 11:02:34.361] SUCCESS: Connected to existing SolidWorks instance
+[2026-04-21 11:02:34.511] SUCCESS: Model对象已获取（Manager延迟初始化）
+[2026-04-21 11:02:34.526] WARNING: V6.1修复: 使用模板路径 = C:\ProgramData\SolidWorks\SolidWorks 2026\templates\gb_part.prtdot
+[2026-04-21 11:02:35.386] WARNING: V6.3: NewDocument 返回成功
+[2026-04-21 11:02:35.386] WARNING: V6.3: 步骤1 - 尝试 dynamic 转换
+[2026-04-21 11:02:35.386] WARNING: V6.3: 步骤1 - dynamic 转换成功
+[2026-04-21 11:02:35.387] WARNING: V6.3: 步骤2 - 尝试 ModelDoc2 转换
+[2026-04-21 11:02:35.394] WARNING: V6.3: 步骤2 - ModelDoc2 转换成功
+[2026-04-21 11:02:35.399] WARNING: V13.0: 步骤2b - 使用官方推荐的 ActivateDoc 方法
+[2026-04-21 11:02:35.415] WARNING: V13.0: 步骤2b-1 - 无法获取文档标题: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 11:02:35.415] WARNING: V13.0: 步骤2b-1 - 使用模板名称: gb_part
+[2026-04-21 11:02:35.415] WARNING: V13.0: 步骤2b-2 - ActivateDoc 返回 null，文档可能已激活
+[2026-04-21 11:02:35.923] WARNING: V6.3: 步骤3 - 尝试获取标题
+[2026-04-21 11:02:35.938] WARNING: V6.3: 步骤3 - GetTitle 失败: 无效索引。 (异常来自 HRESULT:0x8002000B (DISP_E_BADINDEX))
+[2026-04-21 11:02:35.938] WARNING: V6.3: 步骤4 - 尝试 InitializeManagers
+[2026-04-21 11:02:35.971] WARNING: V8.4: SketchManager 获取失败，将在需要时重试
+[2026-04-21 11:02:36.002] WARNING: V8.4: FeatureManager 获取失败，将在需要时重试
+[2026-04-21 11:02:36.002] WARNING: V6.3: 步骤4 - InitializeManagers 成功
+[2026-04-21 11:02:36.002] WARNING: V12.0: 等待 SolidWorks 完全初始化文档 (3秒)
+[2026-04-21 11:02:39.011] WARNING: V12.0: 重建 model 引用成功
+[2026-04-21 11:02:39.013] SUCCESS: V12.0: 创建零件成功，已完成初始化等待

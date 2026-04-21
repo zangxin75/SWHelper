@@ -1,0 +1,115 @@
+Attribute VB_Name = "Module1"
+Option Explicit
+
+' ==============================================
+' SWHelper V15.0 - VBA Macro Automation
+' 100% 自动化方案
+' ==============================================
+
+Sub CreateSketchFront()
+    Dim swApp As Object
+    Dim Model As Object
+    Dim boolstatus As Boolean
+
+    On Error GoTo ErrorHandler
+
+    Set swApp = Application.SldWorks
+    Set Model = swApp.ActiveDoc
+
+    If Model Is Nothing Then
+        Err.Raise vbObjectError + 1, "CreateSketch", "No active document"
+    End If
+
+    ' Select front plane
+    boolstatus = Model.Extension.SelectByID2("Front Plane", "PLANE", 0#, 0#, 0#, False, 0, Nothing, 0)
+
+    If Not boolstatus Then
+        Err.Raise vbObjectError + 2, "CreateSketch", "Cannot select front plane"
+    End If
+
+    ' Insert sketch
+    Model.SketchManager.InsertSketch True
+
+    Exit Sub
+
+ErrorHandler:
+    ' Return error info via message box (can be captured)
+    MsgBox "ERROR: " & Err.Description, vbCritical, "VBA Macro"
+End Sub
+
+Sub CreateCircleSketch(centerX As Double, centerY As Double, radius As Double)
+    Dim swApp As Object
+    Dim Model As Object
+    Dim boolstatus As Boolean
+
+    On Error GoTo ErrorHandler
+
+    Set swApp = Application.SldWorks
+    Set Model = swApp.ActiveDoc
+
+    If Model Is Nothing Then
+        Err.Raise vbObjectError + 1, "CreateCircleSketch", "No active document"
+    End If
+
+    ' Select front plane
+    boolstatus = Model.Extension.SelectByID2("Front Plane", "PLANE", 0#, 0#, 0#, False, 0, Nothing, 0)
+
+    If Not boolstatus Then
+        Err.Raise vbObjectError + 2, "CreateCircleSketch", "Cannot select front plane"
+    End If
+
+    ' Insert sketch
+    Model.SketchManager.InsertSketch True
+
+    ' Create circle
+    Model.SketchManager.CreateCircle(centerX, centerY, 0#, radius, 0#, 0#)
+
+    ' Close sketch
+    Model.SketchManager.InsertSketch False
+
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "ERROR: " & Err.Description, vbCritical, "VBA Macro"
+End Sub
+
+Sub CreateRectangleSketch(width As Double, height As Double)
+    Dim swApp As Object
+    Dim Model As Object
+    Dim boolstatus As Boolean
+    Dim halfWidth As Double
+    Dim halfHeight As Double
+
+    On Error GoTo ErrorHandler
+
+    Set swApp = Application.SldWorks
+    Set Model = swApp.ActiveDoc
+
+    If Model Is Nothing Then
+        Err.Raise vbObjectError + 1, "CreateRectangleSketch", "No active document"
+    End If
+
+    halfWidth = width / 2#
+    halfHeight = height / 2#
+
+    ' Select front plane
+    boolstatus = Model.Extension.SelectByID2("Front Plane", "PLANE", 0#, 0#, 0#, False, 0, Nothing, 0)
+
+    If Not boolstatus Then
+        Err.Raise vbObjectError + 2, "CreateRectangleSketch", "Cannot select front plane"
+    End If
+
+    ' Insert sketch
+    Model.SketchManager.InsertSketch True
+
+    ' Create center rectangle
+    Model.SketchManager.CreateCenterRectangle(0#, 0#, 0#, halfWidth, halfHeight, 0#)
+
+    ' Close sketch
+    Model.SketchManager.InsertSketch False
+
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "ERROR: " & Err.Description, vbCritical, "VBA Macro"
+End Sub
