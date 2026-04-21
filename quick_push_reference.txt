@@ -1,0 +1,85 @@
+# 🚀 快速推送参考 - SWHelper 项目
+
+## ⚡ 最快方法（3步完成）
+
+### 步骤 1: 访问 GitHub 创建仓库
+```
+https://github.com/new
+```
+- 仓库名: `SWHelper`
+- 描述: `SolidWorks 2026 自动化设计系统`
+- 选择 Public 或 Private
+- 不要勾选 "Add README"
+
+### 步骤 2: 在命令行执行（替换 YOUR_USERNAME）
+```bash
+cd D:\sw2026
+git remote add origin https://github.com/YOUR_USERNAME/SWHelper.git
+git push -u origin master
+```
+
+### 步骤 3: 输入 GitHub 凭据
+- 用户名: 你的 GitHub 用户名
+- 密码: Personal Access Token (不是密码!)
+
+---
+
+## 🎯 使用 GitHub CLI（更快）
+
+```bash
+# 安装 GitHub CLI (首次使用)
+winget install --id GitHub.cli
+
+# 登录 (首次使用)
+gh auth login
+
+# 一键创建并推送
+gh repo create SWHelper --public --source=. --remote=origin --push
+```
+
+---
+
+## 📝 需要创建 Token?
+
+访问: https://github.com/settings/tokens
+
+1. 点击 "Generate new token" → "Generate new token (classic)"
+2. 名称: `SWHelper Push`
+3. 勾选: ✅ `repo` (完整仓库访问权限)
+4. 点击 "Generate token"
+5. 复制 token（只显示一次！）
+
+---
+
+## ✅ 验证成功
+
+访问: `https://github.com/YOUR_USERNAME/SWHelper`
+
+应该看到:
+- ✅ 完整的 README.md
+- ✅ 代码目录
+- ✅ LICENSE 文件
+- ✅ 所有提交记录
+
+---
+
+## 📚 详细指南
+
+查看完整文档: [GITHUB_SETUP_GUIDE.md](GITHUB_SETUP_GUIDE.md)
+
+---
+
+**快速命令摘要**:
+```bash
+# 检查状态
+git status
+
+# 查看远程
+git remote -v
+
+# 查看提交
+git log --oneline -5
+
+# 推送到 GitHub
+git push origin master
+```
